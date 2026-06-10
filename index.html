@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathKids — Suma y Resta</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #1A1F3C;
+    --yellow: #FFD54F;
+    --white:  #FFFFFF;
+    --green:  #4CAF50;
+    --red:    #EF5350;
+    --blue-mid: #2D3561;
+    --blue-light: #3D4A8A;
+    --text-dim: #9BA3D4;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+  .logo {
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--yellow); }
+
+  .stats {
+    display: flex;
+    gap: 14px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.1;
+  }
+  .stat-val {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--yellow);
+  }
+  .stat-lbl {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* LEVEL BADGE */
+  .level-row {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .level-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--blue-mid);
+    color: var(--yellow);
+    border-radius: 20px;
+    padding: 4px 12px;
+    white-space: nowrap;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--blue-mid);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--yellow);
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* CARD */
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--blue-mid);
+    border-radius: 24px;
+    padding: 36px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* OPERATION DISPLAY */
+  .operation {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    user-select: none;
+  }
+  .op-num { color: var(--white); }
+  .op-sign { color: var(--yellow); font-size: 3.5rem; }
+  .op-eq { color: var(--text-dim); font-size: 3rem; }
+  .op-answer {
+    min-width: 80px;
+    text-align: center;
+    color: var(--yellow);
+    border-bottom: 3px solid var(--yellow);
+    padding-bottom: 4px;
+    transition: color 0.2s;
+  }
+  .op-answer.empty { color: var(--text-dim); border-color: var(--text-dim); }
+
+  /* FEEDBACK MESSAGE */
+  .feedback {
+    height: 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    opacity: 0;
+    transition: opacity 0.25s;
+    text-align: center;
+  }
+  .feedback.show { opacity: 1; }
+  .feedback.correct { color: var(--green); }
+  .feedback.wrong   { color: var(--red);   }
+
+  /* NUMPAD */
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+  .numpad button {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--blue-light);
+    color: var(--white);
+    border: none;
+    border-radius: 14px;
+    padding: 16px 0;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .numpad button:active { transform: scale(0.93); }
+  .numpad button:hover  { background: #4a5aaa; }
+
+  .btn-del {
+    background: var(--blue-light) !important;
+    font-size: 1.3rem !important;
+  }
+  .btn-ok {
+    background: var(--yellow) !important;
+    color: var(--navy) !important;
+    grid-column: span 2;
+  }
+  .btn-ok:hover { background: #ffe082 !important; }
+
+  /* STREAK INDICATOR */
+  .streak-row {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 22px;
+  }
+  .streak-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--blue-light);
+    transition: background 0.3s, transform 0.3s;
+  }
+  .streak-dot.hit {
+    background: var(--yellow);
+    transform: scale(1.2);
+  }
+
+  /* CONFETTI CANVAS */
+  #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* SHAKE ANIMATION */
+  @keyframes shake {
+    0%,100%{ transform:translateX(0); }
+    20%    { transform:translateX(-10px); }
+    40%    { transform:translateX(10px); }
+    60%    { transform:translateX(-8px); }
+    80%    { transform:translateX(8px); }
+  }
+  .shake { animation: shake 0.4s ease; }
+
+  /* POP ANIMATION */
+  @keyframes pop {
+    0%  { transform:scale(1); }
+    50% { transform:scale(1.18); }
+    100%{ transform:scale(1); }
+  }
+  .pop { animation: pop 0.3s ease; }
+
+  /* ANIMAL BACKGROUND */
+  #animal-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .animal {
+    position: absolute;
+    opacity: 0.13;
+    animation: float-animal linear infinite;
+    transform-origin: center;
+  }
+  @keyframes float-animal {
+    0%   { transform: translateY(0px) rotate(0deg) scale(1); }
+    25%  { transform: translateY(-18px) rotate(4deg) scale(1.04); }
+    50%  { transform: translateY(-8px) rotate(-2deg) scale(1); }
+    75%  { transform: translateY(-22px) rotate(3deg) scale(1.03); }
+    100% { transform: translateY(0px) rotate(0deg) scale(1); }
+  }
+  /* keep content above bg */
+  header, .level-row, .card { position: relative; z-index: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+<div id="animal-bg"></div>
+
+<header>
+  <div class="logo">Math<span>Kids</span></div>
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-val" id="score">0</span>
+      <span class="stat-lbl">Puntos</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val" id="best">0</span>
+      <span class="stat-lbl">Mejor</span>
+    </div>
+  </div>
+</header>
+
+<div class="level-row">
+  <div class="level-badge" id="level-label">Nivel 1</div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+</div>
+
+<div class="card" id="card">
+  <div class="streak-row" id="streak-row"></div>
+
+  <div class="operation" id="operation">
+    <span class="op-num" id="num1">?</span>
+    <span class="op-sign" id="sign">+</span>
+    <span class="op-num" id="num2">?</span>
+    <span class="op-eq">=</span>
+    <span class="op-answer empty" id="answer-display">?</span>
+  </div>
+
+  <div class="feedback" id="feedback">¡Correcto!</div>
+
+  <div class="numpad" id="numpad">
+    <button onclick="appendDigit('7')">7</button>
+    <button onclick="appendDigit('8')">8</button>
+    <button onclick="appendDigit('9')">9</button>
+    <button onclick="appendDigit('4')">4</button>
+    <button onclick="appendDigit('5')">5</button>
+    <button onclick="appendDigit('6')">6</button>
+    <button onclick="appendDigit('1')">1</button>
+    <button onclick="appendDigit('2')">2</button>
+    <button onclick="appendDigit('3')">3</button>
+    <button class="btn-del" onclick="deleteLast()">⌫</button>
+    <button onclick="appendDigit('0')">0</button>
+    <button class="btn-ok" onclick="checkAnswer()">✓ Listo</button>
+  </div>
+</div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let state = {
+  num1: 0, num2: 0, sign: '+', correct: 0,
+  score: 0, best: parseInt(localStorage.getItem('mk_best') || '0'),
+  streak: 0, level: 1, xp: 0,
+  input: ''
+};
+
+const STREAK_MAX = 5;
+const LEVELS = [
+  { label:'Nivel 1', range:[1,9],  ops:['+']     },
+  { label:'Nivel 2', range:[1,15], ops:['+','-'] },
+  { label:'Nivel 3', range:[5,30], ops:['+','-'] },
+  { label:'Nivel 4', range:[10,50],ops:['+','-'] },
+];
+
+// ─── DOM REFS ─────────────────────────────────────────────────────────────────
+const $n1  = document.getElementById('num1');
+const $n2  = document.getElementById('num2');
+const $sg  = document.getElementById('sign');
+const $ans = document.getElementById('answer-display');
+const $fb  = document.getElementById('feedback');
+const $sc  = document.getElementById('score');
+const $bt  = document.getElementById('best');
+const $lv  = document.getElementById('level-label');
+const $pf  = document.getElementById('progress-fill');
+const $sr  = document.getElementById('streak-row');
+const $card= document.getElementById('card');
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+function init() {
+  updateBest();
+  buildStreakDots();
+  newQuestion();
+}
+
+// ─── QUESTION GENERATION ─────────────────────────────────────────────────────
+function newQuestion() {
+  state.input = '';
+  updateAnswerDisplay();
+
+  const lv = LEVELS[Math.min(state.level - 1, LEVELS.length - 1)];
+  const [lo, hi] = lv.range;
+  const op = lv.ops[Math.floor(Math.random() * lv.ops.length)];
+
+  let a = rand(lo, hi);
+  let b = rand(lo, hi);
+
+  if (op === '-' && b > a) [a, b] = [b, a]; // evitar negativos
+
+  state.num1   = a;
+  state.num2   = b;
+  state.sign   = op;
+  state.correct = op === '+' ? a + b : a - b;
+
+  $n1.textContent = a;
+  $n2.textContent = b;
+  $sg.textContent = op;
+
+  hideFeedback();
+}
+
+function rand(lo, hi) {
+  return Math.floor(Math.random() * (hi - lo + 1)) + lo;
+}
+
+// ─── INPUT ────────────────────────────────────────────────────────────────────
+function appendDigit(d) {
+  if (state.input.length >= 3) return;
+  state.input += d;
+  updateAnswerDisplay();
+}
+
+function deleteLast() {
+  state.input = state.input.slice(0, -1);
+  updateAnswerDisplay();
+}
+
+function updateAnswerDisplay() {
+  if (state.input === '') {
+    $ans.textContent = '?';
+    $ans.classList.add('empty');
+  } else {
+    $ans.textContent = state.input;
+    $ans.classList.remove('empty');
+  }
+}
+
+// ─── CHECK ────────────────────────────────────────────────────────────────────
+function checkAnswer() {
+  if (state.input === '') return;
+  const guess = parseInt(state.input, 10);
+
+  if (guess === state.correct) {
+    // CORRECT
+    state.score++;
+    state.streak = Math.min(state.streak + 1, STREAK_MAX);
+    state.xp++;
+
+    updateScore();
+    updateStreakDots(true);
+    updateLevel();
+    showFeedback(true);
+    triggerConfetti();
+
+    $ans.classList.add('pop');
+    setTimeout(() => $ans.classList.remove('pop'), 350);
+    setTimeout(newQuestion, 900);
+  } else {
+    // WRONG
+    state.streak = 0;
+    updateStreakDots(false);
+    showFeedback(false);
+
+    $card.classList.add('shake');
+    setTimeout(() => $card.classList.remove('shake'), 450);
+    state.input = '';
+    updateAnswerDisplay();
+  }
+}
+
+// ─── UI UPDATES ───────────────────────────────────────────────────────────────
+function updateScore() {
+  state.score > state.best && (state.best = state.score, localStorage.setItem('mk_best', state.best));
+  $sc.textContent = state.score;
+  updateBest();
+}
+
+function updateBest() {
+  $bt.textContent = state.best;
+}
+
+function showFeedback(correct) {
+  const msgs = correct
+    ? ['¡Correcto! 🎉','¡Excelente! ⭐','¡Muy bien! 🌟','¡Perfecto! 🔥','¡Genial! 💫']
+    : ['Inténtalo de nuevo 💪','No es ese... sigue! 🤔','¡Casi! Revisa bien 🧐','Puedes lograrlo 💡'];
+  $fb.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+  $fb.className = 'feedback show ' + (correct ? 'correct' : 'wrong');
+}
+
+function hideFeedback() {
+  $fb.className = 'feedback';
+}
+
+function buildStreakDots() {
+  $sr.innerHTML = '';
+  for (let i = 0; i < STREAK_MAX; i++) {
+    const d = document.createElement('div');
+    d.className = 'streak-dot';
+    $sr.appendChild(d);
+  }
+}
+
+function updateStreakDots(hit) {
+  const dots = $sr.querySelectorAll('.streak-dot');
+  dots.forEach((d, i) => {
+    d.classList.toggle('hit', i < state.streak);
+  });
+}
+
+function updateLevel() {
+  const thresholds = [0, 5, 12, 22]; // XP needed to unlock each level
+  for (let i = thresholds.length - 1; i >= 0; i--) {
+    if (state.xp >= thresholds[i]) {
+      state.level = i + 1;
+      break;
+    }
+  }
+  const next = thresholds[Math.min(state.level, thresholds.length - 1)];
+  const curr = thresholds[state.level - 1];
+  const pct = next > curr ? Math.min(((state.xp - curr) / (next - curr)) * 100, 100) : 100;
+  $lv.textContent = LEVELS[Math.min(state.level - 1, LEVELS.length - 1)].label;
+  $pf.style.width  = pct + '%';
+}
+
+// ─── KEYBOARD SUPPORT ─────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key >= '0' && e.key <= '9') appendDigit(e.key);
+  if (e.key === 'Backspace') deleteLast();
+  if (e.key === 'Enter')    checkAnswer();
+});
+
+// ─── CONFETTI ────────────────────────────────────────────────────────────────
+const canvas  = document.getElementById('confetti-canvas');
+const ctx     = canvas.getContext('2d');
+let particles = [];
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function triggerConfetti() {
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height * 0.4,
+      vx: (Math.random() - 0.5) * 5,
+      vy: Math.random() * -6 - 2,
+      size: Math.random() * 8 + 4,
+      color: ['#FFD54F','#4CAF50','#29B6F6','#FF7043','#CE93D8'][Math.floor(Math.random()*5)],
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 8,
+      life: 1
+    });
+  }
+  if (particles.length > 0 && !animating) animateConfetti();
+}
+
+let animating = false;
+function animateConfetti() {
+  animating = true;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles = particles.filter(p => p.life > 0);
+  particles.forEach(p => {
+    p.x  += p.vx;
+    p.y  += p.vy;
+    p.vy += 0.18;
+    p.rotation += p.rotSpeed;
+    p.life -= 0.018;
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rotation * Math.PI / 180);
+    ctx.globalAlpha = Math.max(p.life, 0);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+    ctx.restore();
+  });
+
+  if (particles.length > 0) requestAnimationFrame(animateConfetti);
+  else { animating = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+}
+
+// ─── ANIMAL BACKGROUND ───────────────────────────────────────────────────────
+const ANIMALS = {
+  cat: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- ears -->
+    <polygon points="14,28 22,8 30,28" fill="#FFD54F"/>
+    <polygon points="50,28 58,8 66,28" fill="#FFD54F"/>
+    <!-- head -->
+    <ellipse cx="40" cy="36" rx="24" ry="22" fill="#FFD54F"/>
+    <!-- eyes -->
+    <ellipse cx="30" cy="32" rx="4" ry="5" fill="#1A1F3C"/>
+    <ellipse cx="50" cy="32" rx="4" ry="5" fill="#1A1F3C"/>
+    <circle cx="31" cy="30" r="1.5" fill="white"/>
+    <circle cx="51" cy="30" r="1.5" fill="white"/>
+    <!-- nose -->
+    <polygon points="40,40 37,43 43,43" fill="#FF7043"/>
+    <!-- mouth -->
+    <path d="M37,43 Q34,47 31,45" stroke="#1A1F3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M43,43 Q46,47 49,45" stroke="#1A1F3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- whiskers -->
+    <line x1="44" y1="41" x2="62" y2="38" stroke="#1A1F3C" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="44" y1="43" x2="62" y2="44" stroke="#1A1F3C" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="36" y1="41" x2="18" y2="38" stroke="#1A1F3C" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="36" y1="43" x2="18" y2="44" stroke="#1A1F3C" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- body -->
+    <ellipse cx="40" cy="64" rx="18" ry="14" fill="#FFD54F"/>
+    <!-- tail -->
+    <path d="M58,70 Q72,60 68,48 Q65,40 72,36" stroke="#FFD54F" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>`,
+
+  dog: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- ears -->
+    <ellipse cx="18" cy="30" rx="10" ry="16" fill="#CE93D8" transform="rotate(-15,18,30)"/>
+    <ellipse cx="62" cy="30" rx="10" ry="16" fill="#CE93D8" transform="rotate(15,62,30)"/>
+    <!-- head -->
+    <ellipse cx="40" cy="34" rx="23" ry="20" fill="#CE93D8"/>
+    <!-- snout -->
+    <ellipse cx="40" cy="43" rx="13" ry="9" fill="#BA68C8"/>
+    <!-- eyes -->
+    <circle cx="30" cy="30" r="4.5" fill="#1A1F3C"/>
+    <circle cx="50" cy="30" r="4.5" fill="#1A1F3C"/>
+    <circle cx="31.5" cy="28.5" r="1.5" fill="white"/>
+    <circle cx="51.5" cy="28.5" r="1.5" fill="white"/>
+    <!-- nose -->
+    <ellipse cx="40" cy="40" rx="4" ry="3" fill="#1A1F3C"/>
+    <!-- mouth -->
+    <path d="M36,43 Q40,48 44,43" stroke="#1A1F3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- tongue -->
+    <ellipse cx="40" cy="48" rx="4" ry="3" fill="#EF5350"/>
+    <!-- body -->
+    <ellipse cx="40" cy="66" rx="19" ry="13" fill="#CE93D8"/>
+    <!-- tail -->
+    <path d="M59,64 Q70,54 65,44" stroke="#CE93D8" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>`,
+
+  rabbit: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- ears -->
+    <ellipse cx="28" cy="16" rx="7" ry="18" fill="white"/>
+    <ellipse cx="28" cy="16" rx="4" ry="14" fill="#FFB3BA"/>
+    <ellipse cx="52" cy="16" rx="7" ry="18" fill="white"/>
+    <ellipse cx="52" cy="16" rx="4" ry="14" fill="#FFB3BA"/>
+    <!-- head -->
+    <ellipse cx="40" cy="38" rx="20" ry="18" fill="white"/>
+    <!-- eyes -->
+    <circle cx="32" cy="34" r="4" fill="#EF5350"/>
+    <circle cx="48" cy="34" r="4" fill="#EF5350"/>
+    <circle cx="33" cy="33" r="1.5" fill="white"/>
+    <circle cx="49" cy="33" r="1.5" fill="white"/>
+    <!-- nose -->
+    <ellipse cx="40" cy="42" rx="3" ry="2" fill="#FF7043"/>
+    <!-- mouth -->
+    <path d="M37,44 Q40,48 43,44" stroke="#ccc" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- body -->
+    <ellipse cx="40" cy="65" rx="17" ry="13" fill="white"/>
+    <!-- paws -->
+    <ellipse cx="27" cy="73" rx="7" ry="4" fill="white"/>
+    <ellipse cx="53" cy="73" rx="7" ry="4" fill="white"/>
+    <!-- tail -->
+    <circle cx="57" cy="65" r="5" fill="white"/>
+  </svg>`,
+
+  frog: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- eyes on top -->
+    <circle cx="26" cy="24" r="10" fill="#4CAF50"/>
+    <circle cx="54" cy="24" r="10" fill="#4CAF50"/>
+    <circle cx="26" cy="23" r="5" fill="#1A1F3C"/>
+    <circle cx="54" cy="23" r="5" fill="#1A1F3C"/>
+    <circle cx="27.5" cy="21.5" r="2" fill="white"/>
+    <circle cx="55.5" cy="21.5" r="2" fill="white"/>
+    <!-- head-body -->
+    <ellipse cx="40" cy="50" rx="26" ry="22" fill="#4CAF50"/>
+    <!-- belly -->
+    <ellipse cx="40" cy="54" rx="17" ry="14" fill="#A5D6A7"/>
+    <!-- mouth -->
+    <path d="M28,58 Q40,66 52,58" stroke="#1A1F3C" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- front legs -->
+    <path d="M16,58 Q10,64 14,70 Q18,74 22,70" stroke="#4CAF50" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M64,58 Q70,64 66,70 Q62,74 58,70" stroke="#4CAF50" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>`,
+
+  bird: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- body -->
+    <ellipse cx="40" cy="50" rx="22" ry="18" fill="#29B6F6"/>
+    <!-- wing -->
+    <ellipse cx="24" cy="50" rx="12" ry="8" fill="#0288D1" transform="rotate(-20,24,50)"/>
+    <!-- head -->
+    <circle cx="52" cy="32" r="16" fill="#29B6F6"/>
+    <!-- eye -->
+    <circle cx="57" cy="28" r="5" fill="white"/>
+    <circle cx="58" cy="28" r="3" fill="#1A1F3C"/>
+    <circle cx="59" cy="27" r="1" fill="white"/>
+    <!-- beak -->
+    <polygon points="66,32 74,36 66,38" fill="#FFD54F"/>
+    <!-- tail feathers -->
+    <path d="M20,56 Q8,62 6,72" stroke="#0288D1" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M20,58 Q10,68 12,78" stroke="#29B6F6" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- feet -->
+    <line x1="36" y1="66" x2="30" y2="74" stroke="#FFD54F" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="44" y1="66" x2="48" y2="74" stroke="#FFD54F" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="30" y1="74" x2="25" y2="78" stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
+    <line x1="30" y1="74" x2="28" y2="79" stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
+  </svg>`,
+
+  bear: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- ears -->
+    <circle cx="20" cy="22" r="10" fill="#FF7043"/>
+    <circle cx="60" cy="22" r="10" fill="#FF7043"/>
+    <circle cx="20" cy="22" r="6" fill="#FFCCBC"/>
+    <circle cx="60" cy="22" r="6" fill="#FFCCBC"/>
+    <!-- head -->
+    <circle cx="40" cy="38" r="24" fill="#FF7043"/>
+    <!-- snout -->
+    <ellipse cx="40" cy="46" rx="12" ry="9" fill="#FFCCBC"/>
+    <!-- eyes -->
+    <circle cx="30" cy="32" r="5" fill="#1A1F3C"/>
+    <circle cx="50" cy="32" r="5" fill="#1A1F3C"/>
+    <circle cx="31.5" cy="30.5" r="2" fill="white"/>
+    <circle cx="51.5" cy="30.5" r="2" fill="white"/>
+    <!-- nose -->
+    <ellipse cx="40" cy="42" rx="4.5" ry="3" fill="#1A1F3C"/>
+    <!-- mouth -->
+    <path d="M36,45 Q40,50 44,45" stroke="#1A1F3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- body -->
+    <ellipse cx="40" cy="68" rx="20" ry="13" fill="#FF7043"/>
+  </svg>`,
+
+  star: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- star shape with face -->
+    <polygon points="40,6 49,30 74,30 54,46 62,70 40,55 18,70 26,46 6,30 31,30" fill="#FFD54F"/>
+    <circle cx="33" cy="36" r="4" fill="#1A1F3C"/>
+    <circle cx="47" cy="36" r="4" fill="#1A1F3C"/>
+    <circle cx="34.5" cy="34.5" r="1.5" fill="white"/>
+    <circle cx="48.5" cy="34.5" r="1.5" fill="white"/>
+    <path d="M33,45 Q40,52 47,45" stroke="#1A1F3C" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </svg>`,
+};
+
+function buildAnimalBg() {
+  const bg = document.getElementById('animal-bg');
+  const keys = Object.keys(ANIMALS);
+  const count = 18;
+
+  for (let i = 0; i < count; i++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'animal';
+
+    const key = keys[i % keys.length];
+    const size = 55 + Math.random() * 45;   // 55–100px
+    const x    = Math.random() * 100;        // % across
+    const y    = Math.random() * 100;        // % down
+    const dur  = 4 + Math.random() * 5;     // 4–9s float
+    const delay= -(Math.random() * 5);      // stagger
+
+    wrap.style.cssText = `
+      left: ${x}%;
+      top:  ${y}%;
+      width:  ${size}px;
+      height: ${size}px;
+      animation-duration: ${dur}s;
+      animation-delay: ${delay}s;
+    `;
+    wrap.innerHTML = ANIMALS[key];
+    bg.appendChild(wrap);
+  }
+}
+
+// ─── START ────────────────────────────────────────────────────────────────────
+buildAnimalBg();
+init();
+</script>
+</body>
+</html>
