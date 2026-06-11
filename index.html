@@ -355,7 +355,97 @@ body {
 }
 .sil-letter-btn.active { background: #FF8FAB; color: white; border-color: #D8608A; }
 
-@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+/* ── COMPLETA LA PALABRA ── */
+.cw-card {
+  width:100%; background:var(--card-bg);
+  border-radius:28px; border:3px solid #C8F0D8;
+  padding:20px 18px 24px; box-shadow:0 6px 0 rgba(0,0,0,0.1);
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+}
+.cw-stats { display:flex; gap:20px; }
+.cw-stat  { display:flex; flex-direction:column; align-items:center; }
+.cw-stat-val { font-family:Arial,sans-serif; font-weight:900; font-size:1.4rem; color:var(--red); }
+.cw-stat-val.green { color:var(--green); }
+.cw-stat-lbl { font-size:0.6rem; font-weight:800; color:#BBB; text-transform:uppercase; letter-spacing:0.5px; }
+.cw-image {
+  width:150px; height:150px; border-radius:22px;
+  border:3px solid #C8F0D8; object-fit:cover;
+  background:#f0fdf4; display:flex; align-items:center; justify-content:center;
+  font-size:5rem; overflow:hidden;
+}
+.cw-image img { width:100%; height:100%; object-fit:cover; border-radius:18px; }
+.cw-word {
+  display:flex; align-items:center; gap:6px;
+  font-family:Arial,sans-serif; font-weight:900; font-size:2rem;
+}
+.cw-syl      { color:var(--navy); }
+.cw-blank    {
+  min-width:60px; text-align:center;
+  border-bottom:4px solid var(--green); padding-bottom:2px;
+  color:var(--green); font-size:2rem; font-weight:900;
+}
+.cw-blank.empty { color:#CCC; border-color:#CCC; }
+.cw-dash     { color:#CCC; }
+.cw-feedback {
+  font-family:Arial,sans-serif; font-weight:800; font-size:1rem;
+  height:26px; opacity:0; transition:opacity 0.2s; text-align:center;
+}
+.cw-feedback.show.correct { opacity:1; color:var(--green); }
+.cw-feedback.show.wrong   { opacity:1; color:var(--red); }
+.cw-options {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%;
+}
+.cw-opt {
+  font-family:Arial,sans-serif; font-weight:800; font-size:1.4rem;
+  background:white; color:var(--text);
+  border:3px solid #C8F0D8; border-radius:18px; padding:14px 0;
+  cursor:pointer; box-shadow:0 4px 0 #8ADCAC;
+  transition:transform 0.1s, box-shadow 0.1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.cw-opt:active  { transform:translateY(3px); box-shadow:0 1px 0 #8ADCAC; }
+.cw-opt.correct { background:var(--green); color:white; border-color:#2E8A60; box-shadow:0 4px 0 #2E8A60; }
+.cw-opt.wrong   { background:var(--red);   color:white; border-color:#C94040; box-shadow:0 4px 0 #C94040; }
+
+/* admin panel */
+.cw-admin {
+  width:100%; background:white; border-radius:20px;
+  border:3px solid #C8F0D8; padding:16px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.cw-admin-title { font-weight:800; font-size:0.9rem; color:var(--green); }
+.cw-admin-row   { display:flex; gap:8px; flex-wrap:wrap; }
+.cw-admin input, .cw-admin select {
+  flex:1; min-width:0; font-family:Arial,sans-serif; font-size:0.9rem;
+  padding:8px 12px; border:2px solid #C8F0D8; border-radius:12px;
+  background:white; color:var(--text); outline:none;
+}
+.cw-admin input:focus { border-color:var(--green); }
+.cw-admin-btn {
+  font-family:Arial,sans-serif; font-weight:800; font-size:0.9rem;
+  background:var(--green); color:white;
+  border:2px solid #2E8A60; border-radius:12px;
+  padding:8px 16px; cursor:pointer; white-space:nowrap;
+  box-shadow:0 3px 0 #2E8A60;
+  -webkit-tap-highlight-color:transparent;
+}
+.cw-admin-btn:active { transform:translateY(2px); box-shadow:none; }
+.cw-admin-btn.red { background:var(--red); border-color:#C94040; box-shadow:0 3px 0 #C94040; }
+.cw-word-list { display:flex; flex-direction:column; gap:6px; max-height:160px; overflow-y:auto; }
+.cw-word-item {
+  display:flex; justify-content:space-between; align-items:center;
+  background:#f0fdf4; border-radius:10px; padding:6px 12px;
+  font-size:0.85rem; font-weight:700;
+}
+.cw-word-item button { background:none; border:none; color:var(--red); font-size:1rem; cursor:pointer; padding:0 4px; }
+.cw-tabs { display:flex; gap:8px; width:100%; }
+.cw-tab {
+  flex:1; font-family:Arial,sans-serif; font-weight:800; font-size:0.85rem;
+  padding:8px; border-radius:14px; border:2px solid #C8F0D8;
+  background:white; color:#999; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.cw-tab.active { background:var(--green); color:white; border-color:#2E8A60; }
 </style>
 </head>
 <body>
@@ -408,6 +498,15 @@ body {
       <div class="card-body">
         <div class="card-title">Sílabas 🔡</div>
         <div class="card-desc">¡Toca cada sílaba con la abejita!</div>
+      </div>
+      <div class="card-arrow">▶</div>
+    </div>
+
+    <div class="menu-card" style="border-color:#6DD47E;background:#F0FDF4;" onclick="goTo('completa')">
+      <div class="card-mascot">🐨</div>
+      <div class="card-body">
+        <div class="card-title">Completa la palabra 🖼️</div>
+        <div class="card-desc">¡Adivina la sílaba que falta!</div>
       </div>
       <div class="card-arrow">▶</div>
     </div>
@@ -494,6 +593,53 @@ body {
     </div>
   </div>
 
+  <!-- COMPLETA LA PALABRA -->
+  <div id="completa-screen" class="screen">
+    <button class="back-btn" onclick="goTo('menu')">← Menú</button>
+    <div class="cw-card">
+      <div class="q-mascot">🐨</div>
+      <!-- tabs: jugar / editar -->
+      <div class="cw-tabs">
+        <button class="cw-tab active" id="cw-tab-play" onclick="cwTab('play')">🎮 Jugar</button>
+        <button class="cw-tab"        id="cw-tab-edit" onclick="cwTab('edit')">✏️ Mis palabras</button>
+      </div>
+
+      <!-- PLAY PANEL -->
+      <div id="cw-play-panel" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;">
+        <div class="cw-stats">
+          <div class="cw-stat"><span class="cw-stat-val" id="cw-wrong">0</span><span class="cw-stat-lbl">Fallos</span></div>
+          <div class="cw-stat"><span class="cw-stat-val green" id="cw-score">0</span><span class="cw-stat-lbl">Aciertos</span></div>
+        </div>
+        <div class="cw-image" id="cw-image">🐨</div>
+        <div class="cw-word" id="cw-word"></div>
+        <div class="cw-feedback" id="cw-feedback">¡Muy bien!</div>
+        <div class="cw-options" id="cw-options"></div>
+      </div>
+
+      <!-- EDIT PANEL -->
+      <div id="cw-edit-panel" style="width:100%;display:none;flex-direction:column;gap:12px;">
+        <div class="cw-admin">
+          <div class="cw-admin-title">➕ Agregar palabra</div>
+          <div class="cw-admin-row">
+            <input id="cw-inp-word"  type="text"  placeholder="Palabra (ej: mariposa)" maxlength="20" />
+          </div>
+          <div class="cw-admin-row">
+            <select id="cw-inp-pos">
+              <option value="inicio">Falta al inicio</option>
+              <option value="final">Falta al final</option>
+            </select>
+            <input id="cw-inp-emoji" type="text"  placeholder="Emoji o URL imagen" maxlength="200" />
+          </div>
+          <button class="cw-admin-btn" onclick="cwAddWord()">Agregar ✓</button>
+        </div>
+        <div class="cw-admin">
+          <div class="cw-admin-title">📋 Palabras guardadas</div>
+          <div class="cw-word-list" id="cw-word-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- end .page -->
 
 <script>
@@ -542,13 +688,14 @@ function buildSky() {
 let mathMode = 'suma';
 
 function goTo(screen, mode) {
-  ['menu-screen','abc-screen','math-screen','silabas-screen'].forEach(id =>
+  ['menu-screen','abc-screen','math-screen','silabas-screen','completa-screen'].forEach(id =>
     document.getElementById(id).classList.remove('active')
   );
   document.getElementById(screen + '-screen').classList.add('active');
-  if (screen === 'abc')     abcInit();
-  if (screen === 'silabas') silInit();
-  if (screen === 'math')    { mathMode = mode || 'suma'; mathInit(); }
+  if (screen === 'abc')      abcInit();
+  if (screen === 'silabas')  silInit();
+  if (screen === 'completa') cwInit();
+  if (screen === 'math')     { mathMode = mode || 'suma'; mathInit(); }
 }
 
 // ── SÍLABAS ───────────────────────────────────────────────────────────────────
@@ -902,6 +1049,277 @@ function animateConfetti(){
   });
   if(particles.length>0) requestAnimationFrame(animateConfetti);
   else{ animating=false; ctx.clearRect(0,0,canvas.width,canvas.height); }
+}
+
+// ── COMPLETA LA PALABRA ───────────────────────────────────────────────────────
+// Default word bank
+const CW_DEFAULTS = [
+  // inicio = primera sílaba de 2 letras
+  { word:'mariposa', pos:'inicio', img:'🦋' },  // ma-ri-po-sa → ma
+  { word:'caballo',  pos:'inicio', img:'🐴' },  // ca-ba-llo   → ca
+  { word:'banana',   pos:'inicio', img:'🍌' },  // ba-na-na    → ba
+  { word:'camisa',   pos:'inicio', img:'👕' },  // ca-mi-sa    → ca
+  { word:'ratón',    pos:'inicio', img:'🐭' },  // ra-tón      → ra
+  { word:'helado',   pos:'inicio', img:'🍦' },  // he-la-do    → he
+  { word:'mesa',     pos:'inicio', img:'🪑' },  // me-sa       → me
+  { word:'pelota',   pos:'inicio', img:'⚽' },  // pe-lo-ta    → pe
+  { word:'tomate',   pos:'inicio', img:'🍅' },  // to-ma-te    → to
+  { word:'paloma',   pos:'inicio', img:'🕊️' },  // pa-lo-ma    → pa
+  { word:'limón',    pos:'inicio', img:'🍋' },  // li-món      → li
+  { word:'gatito',   pos:'inicio', img:'🐱' },  // ga-ti-to    → ga
+  { word:'zapato',   pos:'inicio', img:'👟' },  // za-pa-to    → za
+  { word:'nube',     pos:'inicio', img:'☁️' },  // nu-be       → nu
+  { word:'libro',    pos:'inicio', img:'📖' },  // li-bro      → li
+  // final = última sílaba de 2 letras
+  { word:'camisa',   pos:'final',  img:'👕' },  // ca-mi-sa    → sa
+  { word:'banana',   pos:'final',  img:'🍌' },  // ba-na-na    → na
+  { word:'paloma',   pos:'final',  img:'🕊️' },  // pa-lo-ma    → ma
+  { word:'pelota',   pos:'final',  img:'⚽' },  // pe-lo-ta    → ta
+  { word:'tomate',   pos:'final',  img:'🍅' },  // to-ma-te    → te
+  { word:'mariposa', pos:'final',  img:'🦋' },  // ma-ri-po-sa → sa
+  { word:'helado',   pos:'final',  img:'🍦' },  // he-la-do    → do
+  { word:'gatito',   pos:'final',  img:'🐱' },  // ga-ti-to    → to
+  { word:'zapato',   pos:'final',  img:'👟' },  // za-pa-to    → to
+  { word:'nube',     pos:'final',  img:'☁️' },  // nu-be       → be
+];
+
+let cwWords = JSON.parse(localStorage.getItem('cw_words') || 'null') || [...CW_DEFAULTS];
+let cwState = { score:0, wrong:0, answered:false, current:null };
+
+function cwSaveWords() {
+  localStorage.setItem('cw_words', JSON.stringify(cwWords));
+}
+
+// Spanish syllable splitter
+function cwSplit(word) {
+  const w = word.toLowerCase();
+  const vowels = 'aeiouáéíóúü';
+  const isV = c => vowels.includes(c);
+  const insep = ['bl','br','cl','cr','dr','fl','fr','gl','gr','pl','pr','tr','tl'];
+  const chars = [...w];
+  const syls = [];
+  let i = 0;
+  let cur = '';
+  while (i < chars.length) {
+    cur += chars[i];
+    if (isV(chars[i])) {
+      // Count consonants ahead until next vowel or end
+      let j = i + 1;
+      const cons = [];
+      while (j < chars.length && !isV(chars[j])) { cons.push(chars[j]); j++; }
+      if (cons.length === 0) {
+        // vowel follows immediately or end: close syllable
+        syls.push(cur); cur = ''; i++;
+      } else if (cons.length === 1) {
+        if (j >= chars.length) {
+          // final consonant: attach to current syllable
+          cur += cons[0]; syls.push(cur); cur = ''; i += 2;
+        } else {
+          // one consonant then vowel: consonant starts next syllable
+          syls.push(cur); cur = ''; i++;
+        }
+      } else {
+        // 2+ consonants: check if inseparable cluster
+        const pair = cons[0] + cons[1];
+        if (insep.includes(pair)) {
+          // inseparable cluster goes to next syllable
+          syls.push(cur); cur = ''; i++;
+        } else {
+          // split: first consonant ends current syllable
+          cur += cons[0]; syls.push(cur); cur = ''; i += 2;
+        }
+      }
+    } else {
+      i++;
+    }
+  }
+  if (cur) { if (syls.length) syls[syls.length-1] += cur; else syls.push(cur); }
+  return syls.length ? syls : [word];
+}
+
+function cwInit() {
+  // Always reload from localStorage but validate entries
+  const saved = JSON.parse(localStorage.getItem('cw_words') || 'null');
+  if (saved && saved.length) {
+    const valid = saved.filter(w => {
+      const s = cwSplit(w.word);
+      const i = w.pos === 'final' ? s.length - 1 : 0;
+      return s[i] && s[i].length === 2;
+    });
+    // If saved list is outdated/small, merge with defaults
+    if (valid.length < CW_DEFAULTS.length) {
+      cwWords = [...CW_DEFAULTS];
+      localStorage.setItem('cw_words', JSON.stringify(cwWords));
+    } else {
+      cwWords = valid;
+    }
+  } else {
+    cwWords = [...CW_DEFAULTS];
+    localStorage.setItem('cw_words', JSON.stringify(cwWords));
+  }
+  cwState.score = 0; cwState.wrong = 0;
+  document.getElementById('cw-score').textContent = 0;
+  document.getElementById('cw-wrong').textContent = 0;
+  cwTab('play');
+  cwNewQuestion();
+}
+
+function cwTab(tab) {
+  document.getElementById('cw-tab-play').className = 'cw-tab' + (tab==='play'?' active':'');
+  document.getElementById('cw-tab-edit').className = 'cw-tab' + (tab==='edit'?' active':'');
+  document.getElementById('cw-play-panel').style.display = tab==='play' ? 'flex' : 'none';
+  document.getElementById('cw-edit-panel').style.display = tab==='edit' ? 'flex' : 'none';
+  if (tab === 'edit') cwRenderList();
+}
+
+function cwNewQuestion() {
+  if (!cwWords.length) return;
+  cwState.answered = false;
+
+  // Pick a word where the target syllable is exactly 2 letters, avoiding last word
+  let entry, syls, idx, target;
+  const lastWord = cwState.current ? cwState.current.entry.word + cwState.current.entry.pos : null;
+  const pool = [...cwWords];
+  shuffle(pool);
+  // First pass: avoid repeating last question
+  for (const w of pool) {
+    if ((w.word + w.pos) === lastWord) continue;
+    const s = cwSplit(w.word);
+    const i = w.pos === 'final' ? s.length - 1 : 0;
+    if (s[i] && s[i].length === 2) { entry=w; syls=s; idx=i; target=s[i]; break; }
+  }
+  // Second pass: if only one word exists, allow repeat
+  if (!entry) {
+    for (const w of pool) {
+      const s = cwSplit(w.word);
+      const i = w.pos === 'final' ? s.length - 1 : 0;
+      if (s[i] && s[i].length === 2) { entry=w; syls=s; idx=i; target=s[i]; break; }
+    }
+  }
+  // No valid word with 2-letter target syllable found
+  if (!entry) {
+    document.getElementById('cw-word').innerHTML =
+      '<span style="font-size:0.9rem;color:#AAA;">Agrega palabras con sílabas de 2 letras</span>';
+    document.getElementById('cw-options').innerHTML = '';
+    document.getElementById('cw-image').textContent = '🤔';
+    return;
+  }
+  cwState.current = { entry, syls, idx, target };
+
+  // Image
+  const imgEl = document.getElementById('cw-image');
+  if (entry.img.startsWith('http') || entry.img.startsWith('/')) {
+    imgEl.innerHTML = `<img src="${entry.img}" alt="${entry.word}" />`;
+  } else {
+    imgEl.textContent = entry.img;
+  }
+
+  // Word display with blank
+  const wordEl = document.getElementById('cw-word');
+  wordEl.innerHTML = '';
+  syls.forEach((s, i) => {
+    if (i > 0) { const d = document.createElement('span'); d.className='cw-dash'; d.textContent='-'; wordEl.appendChild(d); }
+    const sp = document.createElement('span');
+    if (i === idx) { sp.className='cw-blank empty'; sp.textContent='___'; }
+    else { sp.className='cw-syl'; sp.textContent=s; }
+    wordEl.appendChild(sp);
+  });
+
+  // Feedback reset
+  document.getElementById('cw-feedback').className = 'cw-feedback';
+
+  // Options: target + 5 distractors from all syllables
+  const twoLetterSyls = ALL_SYLLABLES.filter(s => s.length === 2);
+  const distractors = twoLetterSyls.filter(s => s !== target);
+  shuffle(distractors);
+  const opts = [target, ...distractors.slice(0,5)];
+  shuffle(opts);
+
+  const optsEl = document.getElementById('cw-options');
+  optsEl.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'cw-opt';
+    btn.textContent = opt;
+    btn.onclick = () => cwAnswer(opt, btn);
+    optsEl.appendChild(btn);
+  });
+}
+
+function cwAnswer(chosen, btn) {
+  if (cwState.answered) return;
+  cwState.answered = true;
+  const { target } = cwState.current;
+  const correct = chosen === target;
+  const fb = document.getElementById('cw-feedback');
+
+  // Disable all option buttons immediately
+  document.querySelectorAll('.cw-opt').forEach(b => b.onclick = null);
+
+  // Fill in the blank
+  const blanks = document.querySelectorAll('.cw-blank');
+  if (blanks.length) { blanks[0].textContent = chosen; blanks[0].classList.remove('empty'); }
+
+  if (correct) {
+    cwState.score++;
+    document.getElementById('cw-score').textContent = cwState.score;
+    btn.classList.add('correct');
+    fb.textContent = ['¡Muy bien! 🎉','¡Correcto! ⭐','¡Excelente! 🌟','¡Perfecto! 💫'][Math.floor(Math.random()*4)];
+    fb.className = 'cw-feedback show correct';
+    triggerConfetti();
+  } else {
+    cwState.wrong++;
+    document.getElementById('cw-wrong').textContent = cwState.wrong;
+    btn.classList.add('wrong');
+    document.querySelectorAll('.cw-opt').forEach(b => { if (b.textContent === target) b.classList.add('correct'); });
+    fb.textContent = ['¡Casi! 💪','Inténtalo 🤔','¡Tú puedes! 💡'][Math.floor(Math.random()*3)];
+    fb.className = 'cw-feedback show wrong';
+  }
+  setTimeout(cwNewQuestion, 1300);
+}
+
+function cwAddWord() {
+  const word = document.getElementById('cw-inp-word').value.trim().toLowerCase();
+  const pos  = document.getElementById('cw-inp-pos').value;
+  const img  = document.getElementById('cw-inp-emoji').value.trim() || '🖼️';
+  if (!word) return;
+  // Validate that the target syllable is exactly 2 letters
+  const syls = cwSplit(word);
+  const tidx  = pos === 'final' ? syls.length - 1 : 0;
+  if (!syls[tidx] || syls[tidx].length !== 2) {
+    alert('⚠️ La sílaba al ' + pos + ' de "' + word + '" es "' + (syls[tidx]||'?') + '" (' + (syls[tidx]?.length||0) + ' letras). Solo se aceptan sílabas de exactamente 2 letras.');
+    return;
+  }
+  cwWords.push({ word, pos, img });
+  cwSaveWords();
+  document.getElementById('cw-inp-word').value  = '';
+  document.getElementById('cw-inp-emoji').value = '';
+  cwRenderList();
+}
+
+function cwDeleteWord(i) {
+  cwWords.splice(i, 1);
+  cwSaveWords();
+  cwRenderList();
+}
+
+function cwRenderList() {
+  const list = document.getElementById('cw-word-list');
+  list.innerHTML = '';
+  if (!cwWords.length) { list.innerHTML = '<div style="color:#CCC;font-size:0.85rem;padding:8px;">Sin palabras aún</div>'; return; }
+  cwWords.forEach((w, i) => {
+    const syls = cwSplit(w.word);
+    const idx  = w.pos === 'final' ? syls.length - 1 : 0;
+    const row  = document.createElement('div');
+    row.className = 'cw-word-item';
+    const label = w.pos === 'inicio' ? 'inicio' : 'final';
+    row.innerHTML = `<span>${w.img} <b>${w.word}</b> <span style="color:#AAA;font-size:0.75rem;">(falta al ${label}: ${syls[idx] || '?'})</span></span>`;
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.onclick = () => cwDeleteWord(i);
+    row.appendChild(del);
+    list.appendChild(row);
+  });
 }
 
 // ── START ─────────────────────────────────────────────────────────────────────
