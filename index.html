@@ -3,747 +3,911 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MathKids — Suma y Resta</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<title>Prácticas Regis</title>
+
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --navy:   #1A1F3C;
-    --yellow: #FFD54F;
-    --white:  #FFFFFF;
-    --green:  #4CAF50;
-    --red:    #EF5350;
-    --blue-mid: #2D3561;
-    --blue-light: #3D4A8A;
-    --text-dim: #9BA3D4;
-  }
+:root {
+  --sky:      #5BC8F5;
+  --sky-dark: #3AAEE0;
+  --sun:      #FFD93D;
+  --sun-rim:  #FFAA00;
+  --grass:    #6DD47E;
+  --grass-dark:#4CAF61;
+  --white:    #FFFFFF;
+  --cloud:    #FFFDE7;
+  --red:      #FF6B6B;
+  --green:    #56C596;
+  --navy:     #1A3A5C;
+  --card-bg:  #FFFDF4;
+  --text:     #2C3E50;
+  --text-dim: #8AAFCA;
+  --yellow:   #FFD93D;
+  --purple:   #C77DFF;
+  --orange:   #FF9A3C;
+}
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--navy);
-    color: var(--white);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 16px 48px;
-    overflow-x: hidden;
-  }
+body {
+  font-family: Arial, sans-serif;
+  background: var(--sky);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+}
 
-  /* HEADER */
-  header {
-    width: 100%;
-    max-width: 480px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28px;
-  }
-  .logo {
-    font-size: 1.4rem;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-  }
-  .logo span { color: var(--yellow); }
+/* ── SKY BACKGROUND ── */
+#sky-bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(180deg, #87CEEB 0%, #B8E4F7 60%, #D4F1FF 100%);
+  z-index: 0; overflow: hidden; pointer-events: none;
+}
 
-  .stats {
-    display: flex;
-    gap: 14px;
-  }
-  .stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    line-height: 1.1;
-  }
-  .stat-val {
-    font-size: 1.3rem;
-    font-weight: 900;
-    color: var(--yellow);
-  }
-  .stat-lbl {
-    font-size: 0.65rem;
-    font-weight: 600;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+/* SUN */
+.sun {
+  position: absolute; top: 18px; right: 24px;
+  width: 70px; height: 70px;
+  background: var(--sun);
+  border-radius: 50%;
+  box-shadow: 0 0 0 8px #FFE87A, 0 0 0 14px #FFD93D44;
+  animation: spin-slow 20s linear infinite;
+}
+.sun-ray {
+  position: absolute; width: 10px; height: 20px;
+  background: var(--sun); border-radius: 5px;
+  top: 50%; left: 50%; transform-origin: 5px 0;
+}
+@keyframes spin-slow { to { transform: rotate(360deg); } }
 
-  /* LEVEL BADGE */
-  .level-row {
-    width: 100%;
-    max-width: 480px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .level-badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    background: var(--blue-mid);
-    color: var(--yellow);
-    border-radius: 20px;
-    padding: 4px 12px;
-    white-space: nowrap;
-  }
-  .progress-bar {
-    flex: 1;
-    height: 6px;
-    background: var(--blue-mid);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--yellow);
-    border-radius: 99px;
-    transition: width 0.5s cubic-bezier(.4,0,.2,1);
-  }
+/* CLOUDS */
+.cloud {
+  position: absolute;
+  background: white;
+  border-radius: 50px;
+  animation: drift linear infinite;
+  opacity: 0.92;
+}
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+}
+@keyframes drift {
+  from { transform: translateX(-120%); }
+  to   { transform: translateX(110vw); }
+}
 
-  /* CARD */
-  .card {
-    width: 100%;
-    max-width: 480px;
-    background: var(--blue-mid);
-    border-radius: 24px;
-    padding: 36px 28px 28px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
-    position: relative;
-    overflow: hidden;
-  }
+/* GRASS */
+.grass-strip {
+  position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
+  background: var(--grass);
+  border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+  z-index: 0;
+}
+.grass-strip::before {
+  content: '';
+  position: absolute; top: -14px; left: 0; width: 100%; height: 28px;
+  background: var(--grass-dark);
+  border-radius: 50%;
+}
 
-  /* OPERATION DISPLAY */
-  .operation {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    font-size: 4rem;
-    font-weight: 900;
-    line-height: 1;
-    user-select: none;
-  }
-  .op-num { color: var(--white); }
-  .op-sign { color: var(--yellow); font-size: 3.5rem; }
-  .op-eq { color: var(--text-dim); font-size: 3rem; }
-  .op-answer {
-    min-width: 80px;
-    text-align: center;
-    color: var(--yellow);
-    border-bottom: 3px solid var(--yellow);
-    padding-bottom: 4px;
-    transition: color 0.2s;
-  }
-  .op-answer.empty { color: var(--text-dim); border-color: var(--text-dim); }
+/* ── LAYOUT ── */
+.page {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 480px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 20px 16px 90px;
+  gap: 16px;
+  min-height: 100vh;
+}
 
-  /* FEEDBACK MESSAGE */
-  .feedback {
-    height: 28px;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 0.2px;
-    opacity: 0;
-    transition: opacity 0.25s;
-    text-align: center;
-  }
-  .feedback.show { opacity: 1; }
-  .feedback.correct { color: var(--green); }
-  .feedback.wrong   { color: var(--red);   }
+/* ── SCREENS ── */
+.screen { display: none; width: 100%; flex-direction: column; align-items: center; gap: 16px; }
+.screen.active { display: flex; }
 
-  /* NUMPAD */
-  .numpad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    width: 100%;
-  }
-  .numpad button {
-    font-family: 'Nunito', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: var(--blue-light);
-    color: var(--white);
-    border: none;
-    border-radius: 14px;
-    padding: 16px 0;
-    cursor: pointer;
-    transition: transform 0.1s, background 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .numpad button:active { transform: scale(0.93); }
-  .numpad button:hover  { background: #4a5aaa; }
+/* ── TITLE ── */
+.app-title {
+  font-family: Arial, sans-serif;
+  font-size: 2.4rem;
+  color: var(--white);
+  text-shadow: 3px 3px 0 var(--sky-dark), 0 0 20px rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+  text-align: center;
+}
+.app-subtitle {
+  font-size: 1rem; font-weight: 700;
+  color: var(--white);
+  text-shadow: 1px 1px 0 var(--sky-dark);
+  margin-top: -8px;
+}
 
-  .btn-del {
-    background: var(--blue-light) !important;
-    font-size: 1.3rem !important;
-  }
-  .btn-ok {
-    background: var(--yellow) !important;
-    color: var(--navy) !important;
-    grid-column: span 2;
-  }
-  .btn-ok:hover { background: #ffe082 !important; }
+/* ── MENU CARDS ── */
+.menu-card {
+  width: 100%; background: var(--card-bg);
+  border-radius: 28px;
+  padding: 20px 24px;
+  border: 3px solid white;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.12), 0 10px 24px rgba(0,0,0,0.08);
+  cursor: pointer; display: flex; align-items: center; gap: 18px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+}
+.menu-card:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.12); }
 
-  /* STREAK INDICATOR */
-  .streak-row {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-    flex-wrap: wrap;
-    min-height: 22px;
-  }
-  .streak-dot {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--blue-light);
-    transition: background 0.3s, transform 0.3s;
-  }
-  .streak-dot.hit {
-    background: var(--yellow);
-    transform: scale(1.2);
-  }
+.menu-card.yellow { border-color: var(--sun); background: #FFFBEA; }
+.menu-card.orange { border-color: var(--orange); background: #FFF5EA; }
+.menu-card.purple { border-color: var(--purple); background: #F9F0FF; }
 
-  /* CONFETTI CANVAS */
-  #confetti-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 999;
-  }
+.card-mascot { font-size: 3rem; min-width: 56px; text-align: center; line-height: 1; }
+.card-body   { flex: 1; }
+.card-title  {
+  font-family: Arial, sans-serif;
+  font-size: 1.5rem; color: var(--text);
+  line-height: 1.1;
+}
+.card-desc   { font-size: 0.82rem; font-weight: 700; color: #888; margin-top: 2px; }
+.card-arrow  { font-size: 1.6rem; }
 
-  /* SHAKE ANIMATION */
-  @keyframes shake {
-    0%,100%{ transform:translateX(0); }
-    20%    { transform:translateX(-10px); }
-    40%    { transform:translateX(10px); }
-    60%    { transform:translateX(-8px); }
-    80%    { transform:translateX(8px); }
-  }
-  .shake { animation: shake 0.4s ease; }
+/* ── BACK BUTTON ── */
+.back-btn {
+  align-self: flex-start;
+  background: white; border: 3px solid var(--sky-dark);
+  border-radius: 20px; color: var(--sky-dark);
+  font-family: Arial, sans-serif; font-size: 1rem;
+  padding: 6px 18px; cursor: pointer;
+  box-shadow: 0 3px 0 var(--sky-dark);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.back-btn:active { transform: translateY(3px); box-shadow: none; }
 
-  /* POP ANIMATION */
-  @keyframes pop {
-    0%  { transform:scale(1); }
-    50% { transform:scale(1.18); }
-    100%{ transform:scale(1); }
-  }
-  .pop { animation: pop 0.3s ease; }
+/* ── GAME HEADER ── */
+.game-header {
+  width: 100%; background: white;
+  border-radius: 22px; border: 3px solid #E0F4FF;
+  padding: 12px 18px;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.game-title {
+  font-family: Arial, sans-serif;
+  font-size: 1.4rem; color: var(--text);
+}
+.stats { display: flex; gap: 14px; }
+.stat  { display: flex; flex-direction: column; align-items: center; }
+.stat-val { font-family: Arial, sans-serif; font-size: 1.4rem; color: var(--red); }
+.stat-val.green { color: var(--green); }
+.stat-lbl { font-size: 0.6rem; font-weight: 800; color: #AAA; text-transform: uppercase; letter-spacing: 0.5px; }
 
-  /* ANIMAL BACKGROUND */
-  #animal-bg {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
-  .animal {
-    position: absolute;
-    opacity: 0.13;
-    animation: float-animal linear infinite;
-    transform-origin: center;
-  }
-  @keyframes float-animal {
-    0%   { transform: translateY(0px) rotate(0deg) scale(1); }
-    25%  { transform: translateY(-18px) rotate(4deg) scale(1.04); }
-    50%  { transform: translateY(-8px) rotate(-2deg) scale(1); }
-    75%  { transform: translateY(-22px) rotate(3deg) scale(1.03); }
-    100% { transform: translateY(0px) rotate(0deg) scale(1); }
-  }
-  /* keep content above bg */
-  header, .level-row, .card { position: relative; z-index: 1; }
+/* ── LEVEL BAR ── */
+.level-row { width: 100%; display: flex; align-items: center; gap: 10px; }
+.level-badge {
+  font-family: Arial, sans-serif; font-size: 0.85rem;
+  background: var(--sun); color: var(--text);
+  border-radius: 20px; padding: 4px 14px;
+  box-shadow: 0 3px 0 var(--sun-rim); white-space: nowrap;
+}
+.progress-bar { flex: 1; height: 14px; background: white; border-radius: 99px; overflow: hidden; border: 2px solid #E0F4FF; }
+.progress-fill { height: 100%; background: linear-gradient(90deg,#56C596,#FFD93D); border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
 
-  @media (prefers-reduced-motion: reduce) {
-    * { animation: none !important; transition: none !important; }
-  }
+/* ── QUESTION CARD ── */
+.question-card {
+  width: 100%; background: var(--card-bg);
+  border-radius: 28px; border: 3px solid #E0F4FF;
+  padding: 28px 20px 22px;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+
+/* mascot above question */
+.q-mascot { font-size: 3.5rem; animation: bounce 1.5s ease-in-out infinite; }
+@keyframes bounce {
+  0%,100%{ transform:translateY(0); }
+  50%    { transform:translateY(-10px); }
+}
+
+.operation {
+  display: flex; align-items: center; gap: 10px;
+  font-family: Arial, sans-serif; font-size: 3.8rem; line-height: 1;
+  user-select: none;
+}
+.op-num   { color: var(--navy); }
+.op-sign  { color: var(--orange); font-size: 3rem; }
+.op-eq    { color: #CCC; font-size: 2.8rem; }
+.op-answer {
+  min-width: 80px; text-align: center;
+  color: var(--sky-dark);
+  border-bottom: 4px solid var(--sky-dark);
+  padding-bottom: 4px; transition: color 0.2s;
+}
+.op-answer.empty { color: #CCC; border-color: #DDD; }
+
+/* feedback */
+.feedback {
+  height: 30px; font-family: Arial, sans-serif;
+  font-size: 1.1rem; opacity: 0; transition: opacity 0.25s; text-align: center;
+}
+.feedback.show   { opacity: 1; }
+.feedback.correct{ color: var(--green); }
+.feedback.wrong  { color: var(--red); }
+
+/* ── STREAK DOTS ── */
+.streak-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; min-height: 20px; }
+.streak-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #E0EEF8;
+  border: 2px solid #C8DFF0;
+  transition: background 0.3s, transform 0.3s;
+}
+.streak-dot.hit { background: var(--sun); border-color: var(--sun-rim); transform: scale(1.25); }
+
+/* ── NUMPAD ── */
+.numpad { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; width: 100%; }
+.numpad button {
+  font-family: Arial, sans-serif; font-size: 1.6rem;
+  background: white; color: var(--text);
+  border: 3px solid #D8EEFB; border-radius: 18px; padding: 14px 0;
+  cursor: pointer; box-shadow: 0 4px 0 #B8D8EE;
+  transition: transform 0.1s, box-shadow 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.numpad button:active { transform: translateY(3px); box-shadow: 0 1px 0 #B8D8EE; }
+.btn-del { background: #FFF0F0 !important; border-color: #FFCDD2 !important; box-shadow: 0 4px 0 #FFAAB0 !important; font-size: 1.3rem !important; }
+.btn-del:active { box-shadow: 0 1px 0 #FFAAB0 !important; }
+.btn-ok  { background: var(--green) !important; color: white !important; border-color: #3CAB7A !important; box-shadow: 0 4px 0 #2E8A60 !important; grid-column: span 2; }
+.btn-ok:active { box-shadow: 0 1px 0 #2E8A60 !important; }
+
+/* ── ABC ── */
+.abc-card {
+  width: 100%; background: var(--card-bg);
+  border-radius: 28px; border: 3px solid #E0F4FF;
+  padding: 28px 20px; box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.abc-letter-big   { font-family: Arial, sans-serif; font-size: 7rem; color: var(--sky-dark); line-height: 1; transition: transform 0.2s; }
+.abc-letter-small { font-family: Arial, sans-serif; font-size: 3.5rem; color: var(--orange); line-height: 1; }
+.abc-emoji   { font-size: 3rem; min-height: 48px; }
+.abc-word    { font-family: Arial, sans-serif; font-size: 1.4rem; color: var(--text); letter-spacing: 1px; }
+.abc-progress{ font-size: 0.8rem; font-weight: 800; color: #AAA; }
+.abc-dots    { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 320px; }
+.abc-dot     { width: 11px; height: 11px; border-radius: 50%; background: #DDD; cursor: pointer; transition: background 0.3s; border: 2px solid #CCC; }
+.abc-dot.visited { background: var(--sun); border-color: var(--sun-rim); }
+.abc-dot.current { background: var(--green); border-color: #2E8A60; transform: scale(1.3); }
+.abc-nav     { display: flex; gap: 12px; width: 100%; }
+.abc-nav button {
+  flex: 1; font-family: Arial, sans-serif; font-size: 1.1rem;
+  border: 3px solid; border-radius: 18px; padding: 12px 0;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 4px 0; transition: transform 0.1s, box-shadow 0.1s;
+}
+.abc-nav button:active { transform: translateY(3px); box-shadow: 0 1px 0; }
+.btn-prev { background: white; color: var(--sky-dark); border-color: var(--sky-dark); box-shadow: 0 4px 0 var(--sky-dark); }
+.btn-next { background: var(--sky-dark); color: white; border-color: #2E8DB5; box-shadow: 0 4px 0 #2E8DB5; }
+
+/* ── ANIMATIONS ── */
+#confetti-canvas { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+.shake { animation: shake 0.4s ease; }
+@keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+.pop { animation: pop 0.3s ease; }
+
+/* ── SÍLABAS EJERCICIO ── */
+.sil-card {
+  width: 100%; background: var(--card-bg);
+  border-radius: 28px; border: 3px solid #FFE0F0;
+  padding: 24px 20px 28px; box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+}
+.sil-instruction {
+  font-family: Arial, sans-serif; font-size: 1rem;
+  color: #999; text-align: center;
+}
+.sil-target {
+  font-family: Arial, sans-serif; font-size: 5rem;
+  color: #FF8FAB; line-height: 1;
+  text-shadow: 3px 3px 0 #FFB3C8;
+  animation: bounce 1.4s ease-in-out infinite;
+}
+.sil-options {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 10px; width: 100%;
+}
+.sil-opt-btn {
+  font-family: Arial, sans-serif; font-size: 1.5rem;
+  background: white; color: var(--text);
+  border: 3px solid #F0D0FF; border-radius: 18px;
+  padding: 14px 0; cursor: pointer;
+  box-shadow: 0 4px 0 #D8AAEE;
+  transition: transform 0.1s, box-shadow 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.sil-opt-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #D8AAEE; }
+.sil-opt-btn.correct { background: var(--green); color: white; border-color: #2E8A60; box-shadow: 0 4px 0 #2E8A60; }
+.sil-opt-btn.wrong   { background: var(--red);   color: white; border-color: #C94040; box-shadow: 0 4px 0 #C94040; }
+.sil-feedback {
+  font-family: Arial, sans-serif; font-size: 1.1rem;
+  height: 28px; opacity: 0; transition: opacity 0.2s; text-align: center;
+}
+.sil-feedback.show.correct { opacity:1; color: var(--green); }
+.sil-feedback.show.wrong   { opacity:1; color: var(--red); }
+.sil-stats {
+  display: flex; gap: 20px;
+}
+.sil-stat { display: flex; flex-direction: column; align-items: center; }
+.sil-stat-val { font-family: Arial, sans-serif; font-size: 1.4rem; color: #FF8FAB; }
+.sil-stat-val.green { color: var(--green); }
+.sil-stat-lbl { font-size: 0.6rem; font-weight: 800; color: #BBB; text-transform: uppercase; letter-spacing: 0.5px; }
+.sil-letter-filter {
+  width: 100%; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+}
+.sil-letter-btn {
+  font-family: Arial, sans-serif; font-size: 0.9rem;
+  padding: 4px 10px; border-radius: 12px;
+  border: 2px solid #F0D0FF; background: white; color: var(--text);
+  cursor: pointer; transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.sil-letter-btn.active { background: #FF8FAB; color: white; border-color: #D8608A; }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 
 <canvas id="confetti-canvas"></canvas>
-<div id="animal-bg"></div>
 
-<header>
-  <div class="logo">Math<span>Kids</span></div>
-  <div class="stats">
-    <div class="stat">
-      <span class="stat-val" id="score">0</span>
-      <span class="stat-lbl">Puntos</span>
-    </div>
-    <div class="stat">
-      <span class="stat-val" id="best">0</span>
-      <span class="stat-lbl">Mejor</span>
-    </div>
-  </div>
-</header>
-
-<div class="level-row">
-  <div class="level-badge" id="level-label">Nivel 1</div>
-  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<!-- SKY BACKGROUND -->
+<div id="sky-bg">
+  <!-- Sun built by JS -->
+  <!-- Clouds built by JS -->
 </div>
+<div class="grass-strip"></div>
 
-<div class="card" id="card">
-  <div class="streak-row" id="streak-row"></div>
+<div class="page">
 
-  <div class="operation" id="operation">
-    <span class="op-num" id="num1">?</span>
-    <span class="op-sign" id="sign">+</span>
-    <span class="op-num" id="num2">?</span>
-    <span class="op-eq">=</span>
-    <span class="op-answer empty" id="answer-display">?</span>
+  <!-- MENU -->
+  <div id="menu-screen" class="screen">
+    <div class="app-title">🌈 Prácticas Regis</div>
+    <p class="app-subtitle">¿Qué vamos a aprender hoy?</p>
+
+    <div class="menu-card yellow" onclick="goTo('math','suma')">
+      <div class="card-mascot">🐣</div>
+      <div class="card-body">
+        <div class="card-title">Sumas ➕</div>
+        <div class="card-desc">¡Suma números con el pollito!</div>
+      </div>
+      <div class="card-arrow">▶</div>
+    </div>
+
+    <div class="menu-card orange" onclick="goTo('math','resta')">
+      <div class="card-mascot">🐸</div>
+      <div class="card-body">
+        <div class="card-title">Restas ➖</div>
+        <div class="card-desc">¡Resta con la ranita!</div>
+      </div>
+      <div class="card-arrow">▶</div>
+    </div>
+
+    <div class="menu-card purple" onclick="goTo('abc')">
+      <div class="card-mascot">🦋</div>
+      <div class="card-body">
+        <div class="card-title">Abecedario 🔤</div>
+        <div class="card-desc">¡Aprende letras con la mariposa!</div>
+      </div>
+      <div class="card-arrow">▶</div>
+    </div>
+
+    <div class="menu-card" style="border-color:#FF8FAB;background:#FFF0F5;" onclick="goTo('silabas')">
+      <div class="card-mascot">🐝</div>
+      <div class="card-body">
+        <div class="card-title">Sílabas 🔡</div>
+        <div class="card-desc">¡Toca cada sílaba con la abejita!</div>
+      </div>
+      <div class="card-arrow">▶</div>
+    </div>
   </div>
 
-  <div class="feedback" id="feedback">¡Correcto!</div>
+  <!-- MATH -->
+  <div id="math-screen" class="screen">
+    <button class="back-btn" onclick="goTo('menu')">← Menú</button>
 
-  <div class="numpad" id="numpad">
-    <button onclick="appendDigit('7')">7</button>
-    <button onclick="appendDigit('8')">8</button>
-    <button onclick="appendDigit('9')">9</button>
-    <button onclick="appendDigit('4')">4</button>
-    <button onclick="appendDigit('5')">5</button>
-    <button onclick="appendDigit('6')">6</button>
-    <button onclick="appendDigit('1')">1</button>
-    <button onclick="appendDigit('2')">2</button>
-    <button onclick="appendDigit('3')">3</button>
-    <button class="btn-del" onclick="deleteLast()">⌫</button>
-    <button onclick="appendDigit('0')">0</button>
-    <button class="btn-ok" onclick="checkAnswer()">✓ Listo</button>
+    <div class="game-header">
+      <div class="game-title" id="game-title">Sumas ➕</div>
+      <div class="stats">
+        <div class="stat"><span class="stat-val" id="score">0</span><span class="stat-lbl">Falla</span></div>
+        <div class="stat"><span class="stat-val green" id="best">0</span><span class="stat-lbl">Aciertos</span></div>
+      </div>
+    </div>
+
+    <div class="level-row">
+      <div class="level-badge" id="level-label">Nivel 1</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="question-card" id="card">
+      <div class="q-mascot" id="q-mascot">🐣</div>
+      <div class="streak-row" id="streak-row"></div>
+      <div class="operation">
+        <span class="op-num"  id="num1">?</span>
+        <span class="op-sign" id="sign">+</span>
+        <span class="op-num"  id="num2">?</span>
+        <span class="op-eq">=</span>
+        <span class="op-answer empty" id="answer-display">?</span>
+      </div>
+      <div class="feedback" id="feedback">¡Correcto!</div>
+      <div class="numpad">
+        <button onclick="appendDigit('7')">7</button>
+        <button onclick="appendDigit('8')">8</button>
+        <button onclick="appendDigit('9')">9</button>
+        <button onclick="appendDigit('4')">4</button>
+        <button onclick="appendDigit('5')">5</button>
+        <button onclick="appendDigit('6')">6</button>
+        <button onclick="appendDigit('1')">1</button>
+        <button onclick="appendDigit('2')">2</button>
+        <button onclick="appendDigit('3')">3</button>
+        <button class="btn-del" onclick="deleteLast()">⌫</button>
+        <button onclick="appendDigit('0')">0</button>
+        <button class="btn-ok" onclick="checkAnswer()">✓ Listo</button>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- ALPHABET -->
+  <div id="abc-screen" class="screen">
+    <button class="back-btn" onclick="goTo('menu')">← Menú</button>
+    <div class="abc-card">
+      <div class="q-mascot">🦋</div>
+      <div class="abc-letter-big"   id="abc-upper">A</div>
+      <div class="abc-letter-small" id="abc-lower">a</div>
+      <div class="abc-emoji"        id="abc-emoji">✈️</div>
+      <div class="abc-word"         id="abc-word">Avión</div>
+      <div class="abc-progress"     id="abc-progress">1 / 27</div>
+      <div class="abc-dots"         id="abc-dots"></div>
+      <div class="abc-nav">
+        <button class="btn-prev" onclick="abcMove(-1)">← Anterior</button>
+        <button class="btn-next" onclick="abcMove(1)">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SÍLABAS -->
+  <div id="silabas-screen" class="screen">
+    <button class="back-btn" onclick="goTo('menu')">← Menú</button>
+    <div class="sil-card">
+      <div class="q-mascot">🐝</div>
+      <div class="sil-stats">
+        <div class="sil-stat"><span class="sil-stat-val" id="sil-wrong">0</span><span class="sil-stat-lbl">Fallos</span></div>
+        <div class="sil-stat"><span class="sil-stat-val green" id="sil-score">0</span><span class="sil-stat-lbl">Aciertos</span></div>
+      </div>
+      <div class="sil-instruction">¿Cuál es esta sílaba? 👇</div>
+      <div class="sil-target" id="sil-target">la</div>
+      <div class="sil-feedback" id="sil-feedback">¡Muy bien!</div>
+      <div class="sil-options" id="sil-options"></div>
+      <div style="font-family:Arial,sans-serif;font-size:0.85rem;color:#BBB;">Practicar con la letra:</div>
+      <div class="sil-letter-filter" id="sil-letter-filter"></div>
+    </div>
+  </div>
+
+</div><!-- end .page -->
 
 <script>
-// ─── STATE ────────────────────────────────────────────────────────────────────
-let state = {
-  num1: 0, num2: 0, sign: '+', correct: 0,
-  score: 0, best: parseInt(localStorage.getItem('mk_best') || '0'),
-  streak: 0, level: 1, xp: 0,
-  input: ''
-};
+// ── SKY SCENE ─────────────────────────────────────────────────────────────────
+function buildSky() {
+  const bg = document.getElementById('sky-bg');
 
-const STREAK_MAX = 5;
-const LEVELS = [
-  { label:'Nivel 1', range:[1,9],  ops:['+']     },
-  { label:'Nivel 2', range:[1,15], ops:['+','-'] },
-  { label:'Nivel 3', range:[5,30], ops:['+','-'] },
-  { label:'Nivel 4', range:[10,50],ops:['+','-'] },
-];
+  // Sun + rays
+  const sun = document.createElement('div');
+  sun.className = 'sun';
+  for (let i = 0; i < 8; i++) {
+    const ray = document.createElement('div');
+    ray.className = 'sun-ray';
+    ray.style.cssText = `margin-left:-5px; margin-top:-24px; transform:rotate(${i*45}deg) translateY(-42px);`;
+    sun.appendChild(ray);
+  }
+  bg.appendChild(sun);
 
-// ─── DOM REFS ─────────────────────────────────────────────────────────────────
-const $n1  = document.getElementById('num1');
-const $n2  = document.getElementById('num2');
-const $sg  = document.getElementById('sign');
-const $ans = document.getElementById('answer-display');
-const $fb  = document.getElementById('feedback');
-const $sc  = document.getElementById('score');
-const $bt  = document.getElementById('best');
-const $lv  = document.getElementById('level-label');
-const $pf  = document.getElementById('progress-fill');
-const $sr  = document.getElementById('streak-row');
-const $card= document.getElementById('card');
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-function init() {
-  updateBest();
-  buildStreakDots();
-  newQuestion();
+  // Clouds
+  const cloudDefs = [
+    { w:120, h:40, top:'8%',  dur:'28s', delay:'0s'   },
+    { w:90,  h:32, top:'18%', dur:'22s', delay:'-8s'  },
+    { w:150, h:50, top:'5%',  dur:'35s', delay:'-15s' },
+    { w:80,  h:28, top:'28%', dur:'18s', delay:'-5s'  },
+    { w:110, h:38, top:'14%', dur:'30s', delay:'-20s' },
+  ];
+  cloudDefs.forEach(c => {
+    const cl = document.createElement('div');
+    cl.className = 'cloud';
+    cl.style.cssText = `width:${c.w}px;height:${c.h}px;top:${c.top};animation-duration:${c.dur};animation-delay:${c.delay};`;
+    cl.style.before = '';
+    // puff on top-left
+    cl.style.setProperty('--pw', Math.round(c.w*0.5)+'px');
+    cl.style.setProperty('--ph', Math.round(c.h*1.3)+'px');
+    // inline puffs via child divs
+    const p1 = document.createElement('div');
+    p1.style.cssText = `position:absolute;width:${Math.round(c.w*0.45)}px;height:${Math.round(c.h*1.4)}px;background:white;border-radius:50%;top:-${Math.round(c.h*0.6)}px;left:${Math.round(c.w*0.15)}px;`;
+    const p2 = document.createElement('div');
+    p2.style.cssText = `position:absolute;width:${Math.round(c.w*0.35)}px;height:${Math.round(c.h*1.2)}px;background:white;border-radius:50%;top:-${Math.round(c.h*0.4)}px;left:${Math.round(c.w*0.48)}px;`;
+    cl.appendChild(p1); cl.appendChild(p2);
+    bg.appendChild(cl);
+  });
 }
 
-// ─── QUESTION GENERATION ─────────────────────────────────────────────────────
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+let mathMode = 'suma';
+
+function goTo(screen, mode) {
+  ['menu-screen','abc-screen','math-screen','silabas-screen'].forEach(id =>
+    document.getElementById(id).classList.remove('active')
+  );
+  document.getElementById(screen + '-screen').classList.add('active');
+  if (screen === 'abc')     abcInit();
+  if (screen === 'silabas') silInit();
+  if (screen === 'math')    { mathMode = mode || 'suma'; mathInit(); }
+}
+
+// ── SÍLABAS ───────────────────────────────────────────────────────────────────
+// ── SÍLABAS EJERCICIO ─────────────────────────────────────────────────────────
+const CONSONANTS = ['b','c','d','f','g','h','j','l','m','n','ñ','p','q','r','s','t','v','w','x','y','z'];
+const VOWELS     = ['a','e','i','o','u'];
+
+// Build all CV syllables
+function buildAllSyllables() {
+  const all = [];
+  CONSONANTS.forEach(c => {
+    VOWELS.forEach(v => {
+      // Special combos
+      if (c === 'c') { all.push('ca','co','cu','que','qui'); return; }
+      if (c === 'g') { all.push('ga','go','gu','gue','gui'); return; }
+      if (c === 'q') return; // handled above
+      all.push(c + v);
+    });
+  });
+  // also pure vowels as standalone
+  VOWELS.forEach(v => all.push(v));
+  return [...new Set(all)];
+}
+
+const ALL_SYLLABLES = buildAllSyllables();
+
+// syllables grouped by consonant for filter
+function getSylsByLetter(letter) {
+  if (letter === 'todas') return ALL_SYLLABLES;
+  if (VOWELS.includes(letter)) return VOWELS;
+  if (letter === 'c') return ['ca','co','cu','que','qui'];
+  if (letter === 'g') return ['ga','go','gu','gue','gui'];
+  if (letter === 'q') return ['que','qui'];
+  return VOWELS.map(v => letter + v);
+}
+
+let silState = {
+  score: 0, wrong: 0,
+  activeLetter: 'todas',
+  target: '',
+  options: [],
+  answered: false
+};
+
+function silInit() {
+  silState.score = 0; silState.wrong = 0; silState.activeLetter = 'todas';
+  document.getElementById('sil-score').textContent = 0;
+  document.getElementById('sil-wrong').textContent = 0;
+  silBuildFilter();
+  silNewQuestion();
+}
+
+function silBuildFilter() {
+  const container = document.getElementById('sil-letter-filter');
+  container.innerHTML = '';
+  const letters = ['todas', ...VOWELS, ...CONSONANTS.filter(c => c !== 'q')];
+  letters.forEach(l => {
+    const btn = document.createElement('button');
+    btn.className = 'sil-letter-btn' + (l === silState.activeLetter ? ' active' : '');
+    btn.textContent = l.toUpperCase();
+    btn.onclick = () => {
+      silState.activeLetter = l;
+      document.querySelectorAll('.sil-letter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      silNewQuestion();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function silNewQuestion() {
+  silState.answered = false;
+  const pool = getSylsByLetter(silState.activeLetter);
+  // pick target
+  silState.target = pool[Math.floor(Math.random() * pool.length)];
+
+  // pick 5 distractors from ALL (not equal to target)
+  const distractors = ALL_SYLLABLES.filter(s => s !== silState.target);
+  shuffle(distractors);
+  const opts = [silState.target, ...distractors.slice(0, 5)];
+  shuffle(opts);
+  silState.options = opts;
+
+  document.getElementById('sil-target').textContent = silState.target;
+  const fb = document.getElementById('sil-feedback');
+  fb.className = 'sil-feedback';
+
+  const container = document.getElementById('sil-options');
+  container.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'sil-opt-btn';
+    btn.textContent = opt;
+    btn.onclick = () => silAnswer(opt, btn);
+    container.appendChild(btn);
+  });
+}
+
+function silAnswer(chosen, btn) {
+  if (silState.answered) return;
+  silState.answered = true;
+  const correct = chosen === silState.target;
+  const fb = document.getElementById('sil-feedback');
+
+  if (correct) {
+    silState.score++;
+    document.getElementById('sil-score').textContent = silState.score;
+    btn.classList.add('correct');
+    fb.textContent = ['¡Muy bien! 🎉','¡Correcto! ⭐','¡Excelente! 🌟','¡Genial! 💫'][Math.floor(Math.random()*4)];
+    fb.className = 'sil-feedback show correct';
+    triggerConfetti();
+  } else {
+    silState.wrong++;
+    document.getElementById('sil-wrong').textContent = silState.wrong;
+    btn.classList.add('wrong');
+    // highlight correct
+    document.querySelectorAll('.sil-opt-btn').forEach(b => {
+      if (b.textContent === silState.target) b.classList.add('correct');
+    });
+    fb.textContent = ['¡Casi! 💪','Inténtalo 🤔','¡Tú puedes! 💡'][Math.floor(Math.random()*3)];
+    fb.className = 'sil-feedback show wrong';
+  }
+  setTimeout(silNewQuestion, 1100);
+}
+
+function shuffle(arr) {
+  for (let i = arr.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+}
+
+// ── ALPHABET ──────────────────────────────────────────────────────────────────
+const ALPHABET = [
+  { l:'A', word:'Avión',    emoji:'✈️'  },
+  { l:'B', word:'Burro',    emoji:'🫏'  },
+  { l:'C', word:'Casa',     emoji:'🏠'  },
+  { l:'D', word:'Delfín',   emoji:'🐬'  },
+  { l:'E', word:'Estrella', emoji:'⭐'  },
+  { l:'F', word:'Fresa',    emoji:'🍓'  },
+  { l:'G', word:'Gato',     emoji:'🐱'  },
+  { l:'H', word:'Helado',   emoji:'🍦'  },
+  { l:'I', word:'Iglesia',  emoji:'⛪'  },
+  { l:'J', word:'Jaguar',   emoji:'🐆'  },
+  { l:'K', word:'Kilo',     emoji:'⚖️'  },
+  { l:'L', word:'Luna',     emoji:'🌙'  },
+  { l:'M', word:'Manzana',  emoji:'🍎'  },
+  { l:'N', word:'Nube',     emoji:'☁️'  },
+  { l:'Ñ', word:'Ñoño',     emoji:'😄'  },
+  { l:'O', word:'Oso',      emoji:'🐻'  },
+  { l:'P', word:'Perro',    emoji:'🐶'  },
+  { l:'Q', word:'Queso',    emoji:'🧀'  },
+  { l:'R', word:'Rana',     emoji:'🐸'  },
+  { l:'S', word:'Sol',      emoji:'☀️'  },
+  { l:'T', word:'Tortuga',  emoji:'🐢'  },
+  { l:'U', word:'Uva',      emoji:'🍇'  },
+  { l:'V', word:'Vaca',     emoji:'🐄'  },
+  { l:'W', word:'Wifi',     emoji:'📶'  },
+  { l:'X', word:'Xilófono', emoji:'🎵'  },
+  { l:'Y', word:'Yoyo',     emoji:'🪀'  },
+  { l:'Z', word:'Zorro',    emoji:'🦊'  },
+];
+let abcIndex = 0, abcVisited = new Set();
+
+function abcInit() {
+  abcIndex = 0; abcVisited = new Set([0]);
+  const c = document.getElementById('abc-dots');
+  c.innerHTML = '';
+  ALPHABET.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'abc-dot';
+    d.onclick = () => { abcIndex=i; abcVisited.add(i); abcRender(); };
+    c.appendChild(d);
+  });
+  abcRender();
+}
+
+function abcRender(autoSpeak) {
+  const item = ALPHABET[abcIndex];
+  const u = document.getElementById('abc-upper');
+  u.textContent = item.l;
+  u.style.transform = 'scale(1.25)';
+  setTimeout(() => u.style.transform = 'scale(1)', 220);
+  document.getElementById('abc-lower').textContent    = item.l.toLowerCase();
+  document.getElementById('abc-emoji').textContent    = item.emoji;
+  document.getElementById('abc-word').textContent     = item.word;
+  document.getElementById('abc-progress').textContent = (abcIndex+1)+' / '+ALPHABET.length;
+  document.querySelectorAll('.abc-dot').forEach((d,i) => {
+    d.className = 'abc-dot'+(i===abcIndex?' current':abcVisited.has(i)?' visited':'');
+  });
+}
+function abcMove(dir) {
+  abcIndex = (abcIndex+dir+ALPHABET.length)%ALPHABET.length;
+  abcVisited.add(abcIndex); abcRender();
+}
+
+// ── MATH ──────────────────────────────────────────────────────────────────────
+let state = {
+  num1:0,num2:0,sign:'+',correct:0,
+  score:0,best:parseInt(localStorage.getItem('rg_best')||'0'),
+  streak:0,level:1,xp:0,input:''
+};
+const STREAK_MAX = 5;
+const LEVELS = [
+  { label:'Nivel 1', range:[1,10]  },
+  { label:'Nivel 2', range:[1,15]  },
+  { label:'Nivel 3', range:[1,20]  },
+  { label:'Nivel 4', range:[1,30]  },
+];
+const MASCOTS = { suma:'🐣', resta:'🐸' };
+
+const $n1   = document.getElementById('num1');
+const $n2   = document.getElementById('num2');
+const $sg   = document.getElementById('sign');
+const $ans  = document.getElementById('answer-display');
+const $fb   = document.getElementById('feedback');
+const $sc   = document.getElementById('score');
+const $bt   = document.getElementById('best');
+const $lv   = document.getElementById('level-label');
+const $pf   = document.getElementById('progress-fill');
+const $sr   = document.getElementById('streak-row');
+const $card = document.getElementById('card');
+
+function mathInit() {
+  state.score=0; state.streak=0; state.xp=0; state.level=1; state.input='';
+  $sc.textContent=0; $pf.style.width='0%'; $lv.textContent='Nivel 1';
+  document.getElementById('game-title').textContent = mathMode==='suma' ? 'Sumas ➕' : 'Restas ➖';
+  document.getElementById('q-mascot').textContent   = MASCOTS[mathMode];
+  updateBest(); buildStreakDots(); newQuestion();
+}
+
 function newQuestion() {
   state.input = '';
   updateAnswerDisplay();
-
-  const lv = LEVELS[Math.min(state.level - 1, LEVELS.length - 1)];
-  const [lo, hi] = lv.range;
-  const op = lv.ops[Math.floor(Math.random() * lv.ops.length)];
-
-  let a = rand(lo, hi);
-  let b = rand(lo, hi);
-
-  if (op === '-' && b > a) [a, b] = [b, a]; // evitar negativos
-
-  state.num1   = a;
-  state.num2   = b;
-  state.sign   = op;
-  state.correct = op === '+' ? a + b : a - b;
-
-  $n1.textContent = a;
-  $n2.textContent = b;
-  $sg.textContent = op;
-
+  const lv = LEVELS[Math.min(state.level-1, LEVELS.length-1)];
+  const [lo,hi] = lv.range;
+  const op = mathMode==='suma' ? '+' : '-';
+  let a, b;
+  if (op === '+') {
+    // ensure a + b <= 30
+    a = rand(lo, hi);
+    b = rand(lo, Math.min(hi, 30 - a));
+    if (b < lo) b = lo;
+  } else {
+    a = rand(lo, hi);
+    b = rand(lo, a); // b <= a to avoid negatives
+  }
+  state.num1=a; state.num2=b; state.sign=op; state.correct=op==='+'?a+b:a-b;
+  $n1.textContent=a; $n2.textContent=b; $sg.textContent=op;
   hideFeedback();
 }
 
-function rand(lo, hi) {
-  return Math.floor(Math.random() * (hi - lo + 1)) + lo;
-}
+function rand(lo,hi){ return Math.floor(Math.random()*(hi-lo+1))+lo; }
 
-// ─── INPUT ────────────────────────────────────────────────────────────────────
 function appendDigit(d) {
-  if (state.input.length >= 3) return;
-  state.input += d;
-  updateAnswerDisplay();
+  if (state.input.length>=3) return;
+  state.input+=d; updateAnswerDisplay();
 }
-
-function deleteLast() {
-  state.input = state.input.slice(0, -1);
-  updateAnswerDisplay();
-}
-
+function deleteLast()  { state.input=state.input.slice(0,-1); updateAnswerDisplay(); }
 function updateAnswerDisplay() {
-  if (state.input === '') {
-    $ans.textContent = '?';
-    $ans.classList.add('empty');
-  } else {
-    $ans.textContent = state.input;
-    $ans.classList.remove('empty');
-  }
+  if (state.input==='') { $ans.textContent='?'; $ans.classList.add('empty'); }
+  else { $ans.textContent=state.input; $ans.classList.remove('empty'); }
 }
 
-// ─── CHECK ────────────────────────────────────────────────────────────────────
 function checkAnswer() {
-  if (state.input === '') return;
-  const guess = parseInt(state.input, 10);
-
-  if (guess === state.correct) {
-    // CORRECT
-    state.score++;
-    state.streak = Math.min(state.streak + 1, STREAK_MAX);
-    state.xp++;
-
-    updateScore();
-    updateStreakDots(true);
-    updateLevel();
-    showFeedback(true);
-    triggerConfetti();
-
+  if (!state.input) return;
+  const guess=parseInt(state.input,10);
+  if (guess===state.correct) {
+    state.score++; state.streak=Math.min(state.streak+1,STREAK_MAX); state.xp++;
+    updateScore(); updateStreakDots(); updateLevel(); showFeedback(true); triggerConfetti();
     $ans.classList.add('pop');
-    setTimeout(() => $ans.classList.remove('pop'), 350);
-    setTimeout(newQuestion, 900);
+    setTimeout(()=>$ans.classList.remove('pop'),350);
+    setTimeout(newQuestion,950);
   } else {
-    // WRONG
-    state.streak = 0;
-    updateStreakDots(false);
-    showFeedback(false);
-
+    state.streak=0; updateStreakDots(); showFeedback(false);
     $card.classList.add('shake');
-    setTimeout(() => $card.classList.remove('shake'), 450);
-    state.input = '';
-    updateAnswerDisplay();
+    setTimeout(()=>$card.classList.remove('shake'),450);
+    state.input=''; updateAnswerDisplay();
   }
 }
 
-// ─── UI UPDATES ───────────────────────────────────────────────────────────────
 function updateScore() {
-  state.score > state.best && (state.best = state.score, localStorage.setItem('mk_best', state.best));
-  $sc.textContent = state.score;
-  updateBest();
+  if (state.score>state.best){ state.best=state.score; localStorage.setItem('rg_best',state.best); }
+  $sc.textContent=state.score; updateBest();
 }
+function updateBest()  { $bt.textContent=state.best; }
 
-function updateBest() {
-  $bt.textContent = state.best;
-}
-
-function showFeedback(correct) {
-  const msgs = correct
+function showFeedback(ok) {
+  const msgs = ok
     ? ['¡Correcto! 🎉','¡Excelente! ⭐','¡Muy bien! 🌟','¡Perfecto! 🔥','¡Genial! 💫']
-    : ['Inténtalo de nuevo 💪','No es ese... sigue! 🤔','¡Casi! Revisa bien 🧐','Puedes lograrlo 💡'];
-  $fb.textContent = msgs[Math.floor(Math.random() * msgs.length)];
-  $fb.className = 'feedback show ' + (correct ? 'correct' : 'wrong');
+    : ['Inténtalo de nuevo 💪','¡Casi! 🤔','Revisa bien 🧐','¡Tú puedes! 💡'];
+  $fb.textContent=msgs[Math.floor(Math.random()*msgs.length)];
+  $fb.className='feedback show '+(ok?'correct':'wrong');
 }
-
-function hideFeedback() {
-  $fb.className = 'feedback';
-}
+function hideFeedback() { $fb.className='feedback'; }
 
 function buildStreakDots() {
-  $sr.innerHTML = '';
-  for (let i = 0; i < STREAK_MAX; i++) {
-    const d = document.createElement('div');
-    d.className = 'streak-dot';
-    $sr.appendChild(d);
+  $sr.innerHTML='';
+  for(let i=0;i<STREAK_MAX;i++){
+    const d=document.createElement('div'); d.className='streak-dot'; $sr.appendChild(d);
   }
 }
-
-function updateStreakDots(hit) {
-  const dots = $sr.querySelectorAll('.streak-dot');
-  dots.forEach((d, i) => {
-    d.classList.toggle('hit', i < state.streak);
-  });
+function updateStreakDots() {
+  $sr.querySelectorAll('.streak-dot').forEach((d,i)=>d.classList.toggle('hit',i<state.streak));
 }
-
 function updateLevel() {
-  const thresholds = [0, 5, 12, 22]; // XP needed to unlock each level
-  for (let i = thresholds.length - 1; i >= 0; i--) {
-    if (state.xp >= thresholds[i]) {
-      state.level = i + 1;
-      break;
-    }
-  }
-  const next = thresholds[Math.min(state.level, thresholds.length - 1)];
-  const curr = thresholds[state.level - 1];
-  const pct = next > curr ? Math.min(((state.xp - curr) / (next - curr)) * 100, 100) : 100;
-  $lv.textContent = LEVELS[Math.min(state.level - 1, LEVELS.length - 1)].label;
-  $pf.style.width  = pct + '%';
+  const th=[0,5,12,22];
+  for(let i=th.length-1;i>=0;i--){ if(state.xp>=th[i]){state.level=i+1;break;} }
+  const next=th[Math.min(state.level,th.length-1)];
+  const curr=th[state.level-1];
+  const pct=next>curr?Math.min(((state.xp-curr)/(next-curr))*100,100):100;
+  $lv.textContent=LEVELS[Math.min(state.level-1,LEVELS.length-1)].label;
+  $pf.style.width=pct+'%';
 }
 
-// ─── KEYBOARD SUPPORT ─────────────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (e.key >= '0' && e.key <= '9') appendDigit(e.key);
-  if (e.key === 'Backspace') deleteLast();
-  if (e.key === 'Enter')    checkAnswer();
+document.addEventListener('keydown',e=>{
+  if(e.key>='0'&&e.key<='9') appendDigit(e.key);
+  if(e.key==='Backspace') deleteLast();
+  if(e.key==='Enter') checkAnswer();
 });
 
-// ─── CONFETTI ────────────────────────────────────────────────────────────────
-const canvas  = document.getElementById('confetti-canvas');
-const ctx     = canvas.getContext('2d');
-let particles = [];
+// ── CONFETTI ──────────────────────────────────────────────────────────────────
+const canvas=document.getElementById('confetti-canvas');
+const ctx=canvas.getContext('2d');
+let particles=[];
+function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+window.addEventListener('resize',resizeCanvas); resizeCanvas();
 
-function resize() {
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resize);
-resize();
-
-function triggerConfetti() {
-  for (let i = 0; i < 60; i++) {
+function triggerConfetti(){
+  for(let i=0;i<70;i++){
     particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height * 0.4,
-      vx: (Math.random() - 0.5) * 5,
-      vy: Math.random() * -6 - 2,
-      size: Math.random() * 8 + 4,
-      color: ['#FFD54F','#4CAF50','#29B6F6','#FF7043','#CE93D8'][Math.floor(Math.random()*5)],
-      rotation: Math.random() * 360,
-      rotSpeed: (Math.random() - 0.5) * 8,
-      life: 1
+      x:Math.random()*canvas.width, y:Math.random()*canvas.height*0.4,
+      vx:(Math.random()-0.5)*6, vy:Math.random()*-7-2,
+      size:Math.random()*9+4,
+      color:['#FFD93D','#56C596','#5BC8F5','#FF6B6B','#C77DFF','#FF9A3C'][Math.floor(Math.random()*6)],
+      rotation:Math.random()*360, rotSpeed:(Math.random()-0.5)*10, life:1
     });
   }
-  if (particles.length > 0 && !animating) animateConfetti();
+  if(!animating) animateConfetti();
 }
-
-let animating = false;
-function animateConfetti() {
-  animating = true;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles = particles.filter(p => p.life > 0);
-  particles.forEach(p => {
-    p.x  += p.vx;
-    p.y  += p.vy;
-    p.vy += 0.18;
-    p.rotation += p.rotSpeed;
-    p.life -= 0.018;
-
-    ctx.save();
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.rotation * Math.PI / 180);
-    ctx.globalAlpha = Math.max(p.life, 0);
-    ctx.fillStyle = p.color;
-    ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
-    ctx.restore();
+let animating=false;
+function animateConfetti(){
+  animating=true;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles=particles.filter(p=>p.life>0);
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.2; p.rotation+=p.rotSpeed; p.life-=0.016;
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rotation*Math.PI/180);
+    ctx.globalAlpha=Math.max(p.life,0); ctx.fillStyle=p.color;
+    ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2); ctx.restore();
   });
-
-  if (particles.length > 0) requestAnimationFrame(animateConfetti);
-  else { animating = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+  if(particles.length>0) requestAnimationFrame(animateConfetti);
+  else{ animating=false; ctx.clearRect(0,0,canvas.width,canvas.height); }
 }
 
-// ─── ANIMAL BACKGROUND ───────────────────────────────────────────────────────
-const ANIMALS = {
-  cat: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- ears -->
-    <polygon points="14,28 22,8 30,28" fill="#FFD54F"/>
-    <polygon points="50,28 58,8 66,28" fill="#FFD54F"/>
-    <!-- head -->
-    <ellipse cx="40" cy="36" rx="24" ry="22" fill="#FFD54F"/>
-    <!-- eyes -->
-    <ellipse cx="30" cy="32" rx="4" ry="5" fill="#1A1F3C"/>
-    <ellipse cx="50" cy="32" rx="4" ry="5" fill="#1A1F3C"/>
-    <circle cx="31" cy="30" r="1.5" fill="white"/>
-    <circle cx="51" cy="30" r="1.5" fill="white"/>
-    <!-- nose -->
-    <polygon points="40,40 37,43 43,43" fill="#FF7043"/>
-    <!-- mouth -->
-    <path d="M37,43 Q34,47 31,45" stroke="#1A1F3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <path d="M43,43 Q46,47 49,45" stroke="#1A1F3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <!-- whiskers -->
-    <line x1="44" y1="41" x2="62" y2="38" stroke="#1A1F3C" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="44" y1="43" x2="62" y2="44" stroke="#1A1F3C" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="36" y1="41" x2="18" y2="38" stroke="#1A1F3C" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="36" y1="43" x2="18" y2="44" stroke="#1A1F3C" stroke-width="1.2" stroke-linecap="round"/>
-    <!-- body -->
-    <ellipse cx="40" cy="64" rx="18" ry="14" fill="#FFD54F"/>
-    <!-- tail -->
-    <path d="M58,70 Q72,60 68,48 Q65,40 72,36" stroke="#FFD54F" stroke-width="5" fill="none" stroke-linecap="round"/>
-  </svg>`,
-
-  dog: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- ears -->
-    <ellipse cx="18" cy="30" rx="10" ry="16" fill="#CE93D8" transform="rotate(-15,18,30)"/>
-    <ellipse cx="62" cy="30" rx="10" ry="16" fill="#CE93D8" transform="rotate(15,62,30)"/>
-    <!-- head -->
-    <ellipse cx="40" cy="34" rx="23" ry="20" fill="#CE93D8"/>
-    <!-- snout -->
-    <ellipse cx="40" cy="43" rx="13" ry="9" fill="#BA68C8"/>
-    <!-- eyes -->
-    <circle cx="30" cy="30" r="4.5" fill="#1A1F3C"/>
-    <circle cx="50" cy="30" r="4.5" fill="#1A1F3C"/>
-    <circle cx="31.5" cy="28.5" r="1.5" fill="white"/>
-    <circle cx="51.5" cy="28.5" r="1.5" fill="white"/>
-    <!-- nose -->
-    <ellipse cx="40" cy="40" rx="4" ry="3" fill="#1A1F3C"/>
-    <!-- mouth -->
-    <path d="M36,43 Q40,48 44,43" stroke="#1A1F3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <!-- tongue -->
-    <ellipse cx="40" cy="48" rx="4" ry="3" fill="#EF5350"/>
-    <!-- body -->
-    <ellipse cx="40" cy="66" rx="19" ry="13" fill="#CE93D8"/>
-    <!-- tail -->
-    <path d="M59,64 Q70,54 65,44" stroke="#CE93D8" stroke-width="5" fill="none" stroke-linecap="round"/>
-  </svg>`,
-
-  rabbit: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- ears -->
-    <ellipse cx="28" cy="16" rx="7" ry="18" fill="white"/>
-    <ellipse cx="28" cy="16" rx="4" ry="14" fill="#FFB3BA"/>
-    <ellipse cx="52" cy="16" rx="7" ry="18" fill="white"/>
-    <ellipse cx="52" cy="16" rx="4" ry="14" fill="#FFB3BA"/>
-    <!-- head -->
-    <ellipse cx="40" cy="38" rx="20" ry="18" fill="white"/>
-    <!-- eyes -->
-    <circle cx="32" cy="34" r="4" fill="#EF5350"/>
-    <circle cx="48" cy="34" r="4" fill="#EF5350"/>
-    <circle cx="33" cy="33" r="1.5" fill="white"/>
-    <circle cx="49" cy="33" r="1.5" fill="white"/>
-    <!-- nose -->
-    <ellipse cx="40" cy="42" rx="3" ry="2" fill="#FF7043"/>
-    <!-- mouth -->
-    <path d="M37,44 Q40,48 43,44" stroke="#ccc" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <!-- body -->
-    <ellipse cx="40" cy="65" rx="17" ry="13" fill="white"/>
-    <!-- paws -->
-    <ellipse cx="27" cy="73" rx="7" ry="4" fill="white"/>
-    <ellipse cx="53" cy="73" rx="7" ry="4" fill="white"/>
-    <!-- tail -->
-    <circle cx="57" cy="65" r="5" fill="white"/>
-  </svg>`,
-
-  frog: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- eyes on top -->
-    <circle cx="26" cy="24" r="10" fill="#4CAF50"/>
-    <circle cx="54" cy="24" r="10" fill="#4CAF50"/>
-    <circle cx="26" cy="23" r="5" fill="#1A1F3C"/>
-    <circle cx="54" cy="23" r="5" fill="#1A1F3C"/>
-    <circle cx="27.5" cy="21.5" r="2" fill="white"/>
-    <circle cx="55.5" cy="21.5" r="2" fill="white"/>
-    <!-- head-body -->
-    <ellipse cx="40" cy="50" rx="26" ry="22" fill="#4CAF50"/>
-    <!-- belly -->
-    <ellipse cx="40" cy="54" rx="17" ry="14" fill="#A5D6A7"/>
-    <!-- mouth -->
-    <path d="M28,58 Q40,66 52,58" stroke="#1A1F3C" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <!-- front legs -->
-    <path d="M16,58 Q10,64 14,70 Q18,74 22,70" stroke="#4CAF50" stroke-width="5" fill="none" stroke-linecap="round"/>
-    <path d="M64,58 Q70,64 66,70 Q62,74 58,70" stroke="#4CAF50" stroke-width="5" fill="none" stroke-linecap="round"/>
-  </svg>`,
-
-  bird: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- body -->
-    <ellipse cx="40" cy="50" rx="22" ry="18" fill="#29B6F6"/>
-    <!-- wing -->
-    <ellipse cx="24" cy="50" rx="12" ry="8" fill="#0288D1" transform="rotate(-20,24,50)"/>
-    <!-- head -->
-    <circle cx="52" cy="32" r="16" fill="#29B6F6"/>
-    <!-- eye -->
-    <circle cx="57" cy="28" r="5" fill="white"/>
-    <circle cx="58" cy="28" r="3" fill="#1A1F3C"/>
-    <circle cx="59" cy="27" r="1" fill="white"/>
-    <!-- beak -->
-    <polygon points="66,32 74,36 66,38" fill="#FFD54F"/>
-    <!-- tail feathers -->
-    <path d="M20,56 Q8,62 6,72" stroke="#0288D1" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <path d="M20,58 Q10,68 12,78" stroke="#29B6F6" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <!-- feet -->
-    <line x1="36" y1="66" x2="30" y2="74" stroke="#FFD54F" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="44" y1="66" x2="48" y2="74" stroke="#FFD54F" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="30" y1="74" x2="25" y2="78" stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-    <line x1="30" y1="74" x2="28" y2="79" stroke="#FFD54F" stroke-width="2" stroke-linecap="round"/>
-  </svg>`,
-
-  bear: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- ears -->
-    <circle cx="20" cy="22" r="10" fill="#FF7043"/>
-    <circle cx="60" cy="22" r="10" fill="#FF7043"/>
-    <circle cx="20" cy="22" r="6" fill="#FFCCBC"/>
-    <circle cx="60" cy="22" r="6" fill="#FFCCBC"/>
-    <!-- head -->
-    <circle cx="40" cy="38" r="24" fill="#FF7043"/>
-    <!-- snout -->
-    <ellipse cx="40" cy="46" rx="12" ry="9" fill="#FFCCBC"/>
-    <!-- eyes -->
-    <circle cx="30" cy="32" r="5" fill="#1A1F3C"/>
-    <circle cx="50" cy="32" r="5" fill="#1A1F3C"/>
-    <circle cx="31.5" cy="30.5" r="2" fill="white"/>
-    <circle cx="51.5" cy="30.5" r="2" fill="white"/>
-    <!-- nose -->
-    <ellipse cx="40" cy="42" rx="4.5" ry="3" fill="#1A1F3C"/>
-    <!-- mouth -->
-    <path d="M36,45 Q40,50 44,45" stroke="#1A1F3C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <!-- body -->
-    <ellipse cx="40" cy="68" rx="20" ry="13" fill="#FF7043"/>
-  </svg>`,
-
-  star: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- star shape with face -->
-    <polygon points="40,6 49,30 74,30 54,46 62,70 40,55 18,70 26,46 6,30 31,30" fill="#FFD54F"/>
-    <circle cx="33" cy="36" r="4" fill="#1A1F3C"/>
-    <circle cx="47" cy="36" r="4" fill="#1A1F3C"/>
-    <circle cx="34.5" cy="34.5" r="1.5" fill="white"/>
-    <circle cx="48.5" cy="34.5" r="1.5" fill="white"/>
-    <path d="M33,45 Q40,52 47,45" stroke="#1A1F3C" stroke-width="2" fill="none" stroke-linecap="round"/>
-  </svg>`,
-};
-
-function buildAnimalBg() {
-  const bg = document.getElementById('animal-bg');
-  const keys = Object.keys(ANIMALS);
-  const count = 18;
-
-  for (let i = 0; i < count; i++) {
-    const wrap = document.createElement('div');
-    wrap.className = 'animal';
-
-    const key = keys[i % keys.length];
-    const size = 55 + Math.random() * 45;   // 55–100px
-    const x    = Math.random() * 100;        // % across
-    const y    = Math.random() * 100;        // % down
-    const dur  = 4 + Math.random() * 5;     // 4–9s float
-    const delay= -(Math.random() * 5);      // stagger
-
-    wrap.style.cssText = `
-      left: ${x}%;
-      top:  ${y}%;
-      width:  ${size}px;
-      height: ${size}px;
-      animation-duration: ${dur}s;
-      animation-delay: ${delay}s;
-    `;
-    wrap.innerHTML = ANIMALS[key];
-    bg.appendChild(wrap);
-  }
-}
-
-// ─── START ────────────────────────────────────────────────────────────────────
-buildAnimalBg();
-init();
+// ── START ─────────────────────────────────────────────────────────────────────
+buildSky();
+document.addEventListener('DOMContentLoaded', () => goTo('menu'));
+if (document.readyState !== 'loading') goTo('menu');
 </script>
 </body>
 </html>
